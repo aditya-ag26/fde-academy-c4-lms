@@ -83,6 +83,27 @@ measure.
 6. **Find one failure that is not the retriever's fault** — where the corpus, not the
    index, is the problem. Say how you can tell the difference.
 
+## Before you build: commit a decision
+
+Before writing the baseline, fill in a [decision record](../../library/templates/decision-record.md)
+and include it in your submission. Four short fields.
+
+You are deciding **how you will score and rank** — raw term overlap, TF-IDF, or BM25 —
+and committing to it before you see which one flatters your queries.
+
+The field that matters is `would_change_if`. It must name an **observation**:
+
+> ❌ "If it turns out to be the wrong choice"
+> ✅ "If more than half my ten queries return nothing at all, which would mean the
+>    scoring function is not the thing limiting me"
+
+This is checked automatically for shape before a human reads it, and it is worth 10 of
+the 100 marks.
+
+**Why first and not after.** Deciding afterwards is rationalising. Committing before you
+know is uncomfortable, and that discomfort is the skill — it is what the work looks like
+when there is no answer key.
+
 ## Constraints
 
 - **No embedding APIs, no vector databases.** This is a keyword baseline, and the
@@ -100,8 +121,9 @@ See the [rubric](../rubrics/A01-keyword-baseline.md). It is published with this 
 deliberately: knowing what is looked for makes the work better, and there is no
 advantage in keeping it secret.
 
-Note that the failure analysis carries **50 of the 100 points** and the working
-baseline carries 20. That ratio is the assignment.
+Note the weighting: the failure analysis carries **40 of the 100 points**, the
+decision record 10, and the working baseline 20. That ratio is the assignment — the
+baseline is the cheapest part to get right and the least interesting to read.
 
 ## How to submit
 

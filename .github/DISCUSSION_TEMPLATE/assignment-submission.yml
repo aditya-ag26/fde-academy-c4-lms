@@ -59,6 +59,30 @@ body:
       required: true
 
   - type: textarea
+    id: decision
+    attributes:
+      label: Decision record (only if the brief asks for one)
+      description: |
+        Four fields. The last one is the point of the exercise.
+
+        **`would_change_if` must name an OBSERVATION** — something you could go and
+        measure. *"If it turns out to be wrong"* is true of every decision ever made
+        and is rejected automatically.
+
+        [How to write one](../blob/main/library/templates/decision-record.md)
+      value: |
+        decision: >-
+
+        why: >-
+
+        rejected: >-
+
+        would_change_if: >-
+      render: yaml
+    validations:
+      required: false
+
+  - type: textarea
     id: result
     attributes:
       label: Your work

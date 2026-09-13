@@ -30,9 +30,10 @@ That is not an accident; it is the assignment.
 | 1 | **Working baseline** | 20 | Indexes the corpus, returns ranked results for a query, runs from a clean checkout | Does not run, or requires undocumented setup |
 | 2 | **Ten realistic queries** | 15 | Phrased as a user without access to the docs would phrase them; at least six avoid the corpus's own vocabulary | Queries are written in the documents' terms, so most of them succeed trivially |
 | 3 | **Six or more failures, correctly classified** | 25 | Each failure named as synonym / ambiguity / symptom-vs-cause, with the classification justified | Failures listed without classification, or misclassified without reasoning |
-| 4 | **Explanation of *why* the ranking misfires** | 25 | Explains mechanically what the scoring function did and why that produced the wrong order | Restates that it failed, without reference to the mechanism |
+| 4 | **Explanation of *why* the ranking misfires** | 15 | Explains mechanically what the scoring function did and why that produced the wrong order | Restates that it failed, without reference to the mechanism |
 | 5 | **The corpus-vs-retriever distinction** | 10 | Identifies one failure caused by the corpus, and states how you tell the two apart | Absent, or asserted without a test |
-| 6 | **Approach and reflection in the thread** | 5 | Approach written before the result; says honestly what was hard and what would change | Approach is a summary of what was built; reflection is "it went fine" |
+| 6 | **Decision record** | 10 | Four fields filled; `would_change_if` names an observation someone could go and measure | Falsifier restates the decision, or names the conclusion ("if it turns out to be wrong") |
+| 7 | **Approach and reflection in the thread** | 5 | Approach written before the result; says honestly what was hard and what would change | Approach is a summary of what was built; reflection is "it went fine" |
 | | **Total** | **100** | | |
 
 ## What earns full marks on criterion 4
@@ -59,6 +60,30 @@ True, but it restates the outcome.
 The difference: the second explains **what the machinery did**, and distinguishes
 *unreachable* from *underranked* — which is the distinction that makes the next four
 sessions make sense.
+
+## The decision record
+
+This assignment asks you to commit a decision **before** you build the baseline, using
+the [decision record template](../../library/templates/decision-record.md).
+
+The four fields are checked automatically for *shape* before a human reads them, and a
+falsifier that names the conclusion rather than an observation is sent back.
+
+**What is being checked**
+
+| Field | Passes | Fails |
+|---|---|---|
+| `decision` | Names a configuration someone could implement | Names a family: "a sensible approach that combines signals" |
+| `why` | The mechanism — what property of the data makes this work | The leaderboard — "C scored highest at 0.81" |
+| `rejected` | What you did not do, and when it would have been right | Empty, or a strawman nobody would have chosen |
+| `would_change_if` | An observation you could measure | "If it turns out to be wrong" |
+
+**Why this is graded before the code.** Decide, then build. Deciding afterwards is
+rationalising, and the discomfort of committing before you know is the skill being
+practised — it is what the work looks like when there is no answer key.
+
+The automatic check only looks at shape. Whether your reasoning is *good* is marked by
+a human.
 
 ## Common ways to lose marks
 

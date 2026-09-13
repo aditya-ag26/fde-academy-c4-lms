@@ -75,6 +75,23 @@ jobs:
           print(f"OK - {len(names)} labels, taxonomy fully covered")
           PY
 
+  tests:
+    name: Platform tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pytest pyyaml
+
+      # These are real tests, not a stub. The decision checker is the piece most
+      # worth protecting: a false positive tells a student their correct answer is
+      # wrong, which is worse than missing a bad one. Half the test file guards
+      # exactly that direction.
+      - name: Run platform tests
+        run: python -m pytest _staging-platform-repo/tests/ -q
+
   forms-valid:
     name: Discussion forms parse
     runs-on: ubuntu-latest

@@ -1,35 +1,45 @@
 # labels.yaml — GitHub labels as data.
 #
-# THE TWO-AXIS RULE:
-#   A Discussion CATEGORY says *what kind of post* this is.
-#   A LABEL says *what it is about*.
-# You need both. With categories alone, nobody can find every thread on one topic.
+# FOUR AXES. Together they make the forum searchable:
 #
-# The SAME label set is applied to Discussions AND Issues, so a single query spans
-# both surfaces. This is the point — do not fork the vocabulary per surface.
+#   the Discussion category  (not a label)   what KIND of post this is
+#   type:*                                   what the thread IS
+#   topic:*                                  what it is ABOUT   ← the useful one
+#   status:*                                 where it is in its lifecycle
+#   track: / session: / activity: / difficulty:   which part of the course
 #
-# Labels are applied BY THE BOT from structured form fields, not typed by students.
-# Students have read access and cannot label anything.
+# TOPIC TAGS ARE WHAT MAKE IT WORK. "Everything about chunking" is the query
+# people run, and categories cannot answer it.
 #
-# Applied by the provisioning script; this file is the source of truth. A label
-# edited in the GitHub UI will be reverted on the next sync.
+# ⚠️ SCOPE: topics below cover ONLY the two tracks this batch runs
+# (ai-engineering, data-foundations) plus setup/tooling. Do not pre-create tags
+# for content this batch will not reach — an empty tag makes the forum look
+# abandoned, and an uncontrolled vocabulary fragments fast. Add one when a real
+# thread needs it, by PR.
+#
+# The SAME label set applies to Discussions AND Issues, so one query spans both.
+# Labels are applied BY THE BOT from form fields, never by students — they have
+# read access and cannot label anything.
+#
+# provision.py syncs this file. A label edited in the GitHub UI is reverted.
 
-version: 1
+version: 2
 
-# Colours are grouped by axis so the label list is readable at a glance.
 palette:
   track:      "0e8a16"   # green
+  topic:      "006b75"   # teal   — the topic axis
   session:    "1d76db"   # blue
   activity:   "5319e7"   # purple
   status:     "d93f0b"   # orange
   type:       "fbca04"   # yellow
   difficulty: "c5def5"   # pale blue
   meta:       "bfc4c9"   # grey
+  community:  "e99695"   # pink
 
 labels:
 
-  # --- track:* — subject area. Generated from .config/taxonomy.yaml tracks -----
-  # Keep in sync with taxonomy; CI checks that every track has a label.
+  # ============================================================ track:*
+  # From .config/taxonomy.yaml. All four defined; only two are active this batch.
   - name: "track:ai-engineering"
     color: "0e8a16"
     description: "Subject area: AI Engineering"
@@ -38,37 +48,81 @@ labels:
     description: "Subject area: Data Foundations"
   - name: "track:systems-design"
     color: "0e8a16"
-    description: "Subject area: Systems Design"
+    description: "Subject area: Systems Design (not active this batch)"
+    inactive: true
   - name: "track:professional-skills"
     color: "0e8a16"
-    description: "Subject area: Professional Skills"
+    description: "Subject area: Professional Skills (not active this batch)"
+    inactive: true
 
-  # --- session:* — which session a thread relates to --------------------------
-  # Created on demand by the bot as sessions are added, pattern `session:S07`.
-  # Seeded here with one example so the pattern is documented and testable.
+  # ============================================================ topic:*
+  # Scoped to this batch. Eleven, not thirty.
+
+  # -- ai-engineering
+  - name: "topic:retrieval"
+    color: "006b75"
+    description: "Search, ranking, getting the right documents back"
+  - name: "topic:embeddings"
+    color: "006b75"
+    description: "Vector representations, similarity, embedding models"
+  - name: "topic:chunking"
+    color: "006b75"
+    description: "Splitting documents for indexing"
+  - name: "topic:evaluation"
+    color: "006b75"
+    description: "Measuring quality honestly — baselines, test sets, metrics"
+
+  # -- data-foundations
+  - name: "topic:data-quality"
+    color: "006b75"
+    description: "Cleaning, deduplication, corpus problems"
+  - name: "topic:pipelines"
+    color: "006b75"
+    description: "Ingestion, ETL, scheduled jobs"
+
+  # -- cross-cutting, and the tags that dominate week one every cohort
+  - name: "topic:python"
+    color: "006b75"
+    description: "Language, libraries, idioms"
+  - name: "topic:debugging"
+    color: "006b75"
+    description: "Finding out why something does not work"
+  - name: "topic:setup"
+    color: "006b75"
+    description: "Installation, environment, dependencies"
+  - name: "topic:notebooks"
+    color: "006b75"
+    description: "Jupyter, kernels, reproducibility"
+  - name: "topic:interview-prep"
+    color: "006b75"
+    description: "Interview questions and preparation"
+
+  # ============================================================ session: / activity:
+  # Created on demand by the bot. One exemplar each documents the pattern;
+  # `pattern: true` stops provision.py creating a misleading empty label.
   - name: "session:S01"
     color: "1d76db"
     description: "Relates to session S01"
-    pattern: true   # marks this as an exemplar of a bot-generated family
-
-  # --- activity:* — which activity a thread relates to ------------------------
-  # Created on demand by the bot, pattern `activity:A12`.
+    pattern: true
   - name: "activity:A01"
     color: "5319e7"
     description: "Relates to activity A01"
     pattern: true
 
-  # --- status:* — where a thread is in its lifecycle --------------------------
-  # Exactly one status label should be present at a time. The bot enforces this.
+  # ============================================================ status:*
+  # Exactly one at a time. The bot enforces this.
   - name: "status:needs-answer"
     color: "d93f0b"
     description: "Open question, nobody has answered yet"
   - name: "status:answered"
     color: "0e8a16"
-    description: "An answer has been marked by the thread author"
+    description: "The author marked an answer — it solved their problem"
+  - name: "status:verified"
+    color: "0e8a16"
+    description: "Staff confirmed the answer is correct, not merely accepted"
   - name: "status:needs-staff"
     color: "b60205"
-    description: "Escalated to staff — peers could not resolve it, or /staff was used"
+    description: "Escalated — peers could not resolve it, or /staff was used"
   - name: "status:resolved"
     color: "6f42c1"
     description: "Closed out; nothing further needed"
@@ -79,7 +133,7 @@ labels:
     color: "d93f0b"
     description: "Reviewed, changes requested, waiting on the student"
 
-  # --- type:* — what the thread IS --------------------------------------------
+  # ============================================================ type:*
   - name: "type:submission"
     color: "fbca04"
     description: "An activity submission"
@@ -96,7 +150,7 @@ labels:
     color: "fbca04"
     description: "Help Desk: access, tooling, admin. Not academic"
 
-  # --- difficulty:* — from .config/taxonomy.yaml ------------------------------
+  # ============================================================ difficulty:*
   - name: "difficulty:easy"
     color: "c5def5"
     description: "Difficulty: easy"
@@ -107,10 +161,22 @@ labels:
     color: "c5def5"
     description: "Difficulty: hard"
 
-  # --- meta — culture and curation mechanics ----------------------------------
+  # ============================================================ community
+  # Each exists to make one specific behaviour more likely.
   - name: "good-first-answer"
+    color: "e99695"
+    description: "A peer can answer this. Grows the answering culture — not a way to deflect staff"
+  - name: "great-question"
+    color: "e99695"
+    description: "Well-posed: says what was tried and where it broke down"
+  - name: "duplicate-of"
     color: "bfc4c9"
-    description: "A peer can answer this. Applied to grow the answering culture, not to deflect staff"
+    description: "Asked before — links to the original rather than closing silently"
+  - name: "needs-detail"
+    color: "d93f0b"
+    description: "Not answerable as written — needs what was tried, or the actual error"
+
+  # ============================================================ meta
   - name: "faq-candidate"
     color: "bfc4c9"
     description: "Flagged for harvest into library/faqs/"
@@ -119,7 +185,10 @@ labels:
     description: "Staff-authored model of a good question or answer. Always footered as faculty-written"
   - name: "retracted"
     color: "bfc4c9"
-    description: "A claim that turned out wrong, kept visible with its correction attached. Deleting teaches nobody"
+    description: "A claim that turned out wrong, kept visible with its correction. Deleting teaches nobody"
   - name: "peer-review-owed"
     color: "bfc4c9"
     description: "This student owes a peer review on someone else's submission"
+  - name: "canonical"
+    color: "0e8a16"
+    description: "The definitive thread on this topic. Duplicates point here"
