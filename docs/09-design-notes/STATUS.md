@@ -94,55 +94,47 @@ The build is complete. What remains is configuration and content, not constructi
 | **Fill in `.config/batch.yaml`** | Real dates, tracks and staff handles. Everything generated reads from it, so a placeholder date makes every page wrong |
 | **Replace the example content** | S01, A01, A02 and CS-01 exist to demonstrate the shape. They are marked as examples; delete them once two or three real sessions exist |
 | **Decide the open questions below** | Each one is a policy call, not an engineering one |
-| **Decide whether to build the pipeline** | Designed, not built — deliberately. See *The content pipeline* below |
+| **Settle the three pipeline decisions** | Trigger, model provider, Drive permissions. See *The content pipeline* below |
 | **Wire the bot to `lmskit.discussions`** | The logic is written and tested; the workflow still logs what it would do. Needs the categories to exist first, which they now do |
 
-## The content pipeline — a decision, not a gap
+## The content pipeline — specified, not built
 
-**Designed and specified. No implementation, deliberately.** If you are reading the
-empty `automation/src/` directories as abandoned work, they are not — Phase 6 specified
-scaffolding only, and the reason is worth stating.
+**The goal: one human action per session.** A reviewer reads a pull request and clicks
+approve. Everything either side of that is triggered.
 
-### What exists
+### What is settled
 
-| | |
-|---|---|
-| **Eight skill prompts** | The valuable part. Writing them forced decisions about what a good pre-read *is* — a content question, not an engineering one |
-| **Three config schemas** | The four-zone Drive model, retry cap, approver routing |
-| **Five stage specifications** | What each stage reads, writes, and must not do |
+**Two paths, not one.** Class artefacts (notebooks, assignments, class notes) are
+**deliverables** — validated and committed, no model involved. Generated documents
+(pre/post-reads, interview banks) are **derived** from them. A file can be both: a
+transcript is something students search *and* the input every post-read is grounded in.
 
-### Why it stops there
+*Which documents belong in each list is still being decided. The shape is settled.*
 
-**There is nothing to run it on.** The pipeline turns transcripts into documents, and no
-real session has happened yet. Tuning prompts against fabricated input tunes them for
-fabricated input.
+**Generation belongs in the pipeline**, via the Messages API. The prompts already exist
+and are used by hand in Claude chat — they carry over as system prompts. What cannot
+carry over is the chat step: a person copy-pasting in and out **is** the manual
+intervention this removes, and it loses provenance, determinism and cost visibility.
 
-**The cheaper checkpoint is earlier.** Agreeing what a session should produce, and from
-what, costs less than catching a problem in a generated draft. A shared document saying
-"S07 produces a post-read and three interview questions, from the transcript" captures
-much of the value with no build at all.
+**One PR per session**, reviewed as a unit. Five PRs for one session is how review stops
+happening.
 
-**Two decisions are still open**, and both shape the code rather than following from it:
+**Three regeneration attempts**, carrying the reviewer's feedback into each, then
+escalate to a human. An uncapped loop burns budget and converges on nothing.
 
-| Question | Options | Why it matters |
+### Three open decisions
+
+| | Preferred | Blocker |
 |---|---|---|
-| **Build it at all, and when** | Run the prompts by hand for 2–3 sessions first · build ingest+generate now · build everything · park it | Running them manually tells you which artefacts faculty actually approve, which is the thing worth automating |
-| **Drive permissions** | Two shared drives · one drive with convention | Permissions inside a shared drive are strictly *expansive* — a member's role cannot be reduced for a subfolder, so "comment-only on `3-review/`" is impossible in one drive. This changes the setup instructions faculty receive |
+| **Trigger** | Drive push notifications — genuinely event-driven | Needs a public HTTPS endpoint you host, with channels renewed every 7 days. GitHub Actions cannot receive a webhook directly. The fallback is a 15-minute poll with no infrastructure at all |
+| **Model provider** | Undecided | Direct API, Bedrock and Vertex all expose the same surface. The generate stage builds its client in one place, so this is a config change |
+| **Drive permissions** | Two shared drives | Permissions inside one shared drive are strictly *expansive* — a role cannot be reduced for a subfolder, so "comment-only on `3-review/`" is impossible in a single drive. Changes the setup instructions faculty receive |
 
-**Both are open for discussion rather than decided.** The scaffolding is deliberately
-cheap to abandon if the answer is "not this way".
+**None of these blocks the others.** The stages are written trigger-agnostic; whatever
+fires them, `ingest` does the same thing.
 
-### A suggestion, not a decision
-
-Run the skill prompts **by hand** on the first two or three real sessions. That answers,
-with evidence rather than guesswork:
-
-- Does the output pass faculty review?
-- How long does reviewing a generated draft actually take?
-- Which artefacts are worth automating? (Likely post-read and FAQ. Likely not
-  case-study, which already ships disabled for this reason.)
-
-Then build only what earned it.
+Full design: [`automation/README.md`](../../_staging-private-repo/automation/README.md)
+and [`pipeline.yaml`](../../_staging-private-repo/automation/config/pipeline.yaml).
 
 ## Before students are given access
 

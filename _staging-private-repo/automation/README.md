@@ -2,10 +2,11 @@
 
 Drive → generate → review → repo.
 
-> **Scaffolding only, and whether to build it is itself an open question.**
-> No implementation code exists, deliberately. See
-> [STATUS.md](../../docs/09-design-notes/STATUS.md#the-content-pipeline--a-decision-not-a-gap)
-> for why, and what would need deciding first.
+> **Specified, not built.** No implementation code exists yet. The design below is
+> settled; three decisions are still open and are listed at the end.
+
+**The goal: one human action per session.** A reviewer reads a pull request and clicks
+approve. Everything either side of that is triggered.
 
 This directory holds the pipeline's shape, its configuration schema, and its prompts.
 The prompts are the valuable part — writing them forced decisions about what a good
@@ -38,30 +39,68 @@ to learn — no forms, no status fields, no separate tracker to keep in sync.
 half-uploaded recording must not start a generation run, and faculty need somewhere to
 put work in progress.
 
-## The five stages
+## Two paths, not one
+
+This is the thing to understand before anything else.
+
+| | What it is | Pipeline does |
+|---|---|---|
+| **Direct** | A file students read — a notebook, an assignment, class notes | Convert, validate, commit. **No model involved.** |
+| **Derived** | A document generated *from* direct files — a post-read, an interview bank | Generate → validate → review → commit |
+
+**A file can be both.** A transcript is a deliverable students search *and* the input
+every post-read is grounded in. That is why `config/pipeline.yaml` has two separate
+lists with an `also_an_input` flag, rather than one list with a type field.
+
+> Which documents end up in each list is still being decided. The **shape** is settled;
+> moving an entry between lists is a config change.
+
+## Why generation is inside the pipeline
+
+The prompts already exist and are used by hand in Claude chat. That work carries over —
+**the skills become system prompts for the Messages API.**
+
+What cannot carry over is the chat step itself. A person copy-pasting input in and
+output back out *is* the manual intervention this is meant to remove, and it also loses
+three things worth having:
+
+- **Provenance.** `skill_version` and source hashes in the frontmatter mean any document
+  traces to the exact prompt and inputs that produced it.
+- **Determinism.** Low effort variance, versioned prompts, reproducible runs.
+- **Cost visibility.** `response.usage` per run, recorded in `state/`.
+
+## The stages
 
 ```mermaid
-flowchart LR
-    I["ingest<br/><sub>pull + hash</sub>"] --> G["generate<br/><sub>skill + model</sub>"]
-    G --> V["validate<br/><sub>schema check</sub>"]
-    V --> R["review<br/><sub>PR + feedback</sub>"]
-    R -->|"approved"| P["publish<br/><sub>merge</sub>"]
-    R -->|"changes<br/>requested"| G
+flowchart TD
+    D["📁 Drive /2-ready/"] --> I["ingest<br/><sub>pull, convert, hash</sub>"]
+    I --> K{"direct or<br/>derived?"}
+    K -->|direct| V["validate"]
+    K -->|derived| G["generate<br/><sub>Messages API</sub>"]
+    G --> V
+    V -->|fails| G
+    V -->|passes| R["review<br/><sub>one PR per session</sub>"]
+    R -->|"changes requested<br/>(max 3)"| G
+    R -->|approved| P["publish<br/><sub>merge</sub>"]
 
     style R fill:#2d2a1f,stroke:#b08800,color:#e8e8e8
     style P fill:#1c2b20,stroke:#347d39,color:#e8e8e8
 ```
 
-| Stage | Does |
-|---|---|
-| **ingest** | Pull from Drive, hash every source into `sources:` provenance |
-| **generate** | Produce a draft using a versioned skill |
-| **validate** | Check against the frontmatter schema **before a human sees it** |
-| **review** | Open a PR; carry reviewer feedback into the next attempt |
-| **publish** | Merge. A human approves through a GitHub Environment |
+| Stage | Does | Model? |
+|---|---|:--:|
+| **ingest** | Pull from Drive, convert to markdown, hash into `sources:` | — |
+| **generate** | Produce a derived document using a versioned skill | ✅ |
+| **validate** | Check against the frontmatter schema **before a human sees it** | — |
+| **review** | Open one PR per session; carry feedback into the next attempt | — |
+| **publish** | Merge. A human approves through a GitHub Environment | — |
 
 Each stage is separately runnable. A pipeline that only runs end to end cannot be
 debugged, and this one touches an external API, a model and two repositories.
+
+**One PR per session, not per artefact.** A reviewer opens one thing and sees the
+transcript, the notebook and the three generated documents together. Five PRs for one
+session is how review stops happening.
 
 ## Why a PR is the approval mechanism
 
@@ -120,16 +159,54 @@ An uncapped regenerate-on-rejection loop burns budget and converges on nothing.
 
 ## Still undecided
 
-Recorded honestly, because these are the decisions that will shape the build:
+Three, and each is a real decision rather than a detail to fill in later.
 
-| Question | Options | Notes |
+### 1. The trigger
+
+**Preferred: Drive push notifications.** Genuinely event-driven — Drive calls a webhook
+the moment a file moves into `2-ready/`.
+
+**The obstacle:** push requires a public HTTPS endpoint that you host, and the
+notification channels expire every seven days and must be renewed. GitHub Actions cannot
+receive a webhook directly, so this means real infrastructure — a small always-on
+service — not just another workflow file.
+
+**The fallback, if that is not wanted:** a scheduled poll every fifteen minutes. No
+infrastructure, no endpoint, no renewal. The delay costs nothing when the alternative is
+a human processing it the next morning.
+
+**Not yet decided.** The stages are written to be trigger-agnostic: whatever fires them,
+`ingest` does the same thing. Choosing later changes one entry point, not the pipeline.
+
+### 2. Which model provider
+
+Undecided, so the generate stage constructs its client in **one place**. Direct
+Anthropic API, Bedrock and Vertex all expose the same `messages.create` surface — the
+difference is the client class and where the bill lands.
+
+Switching is a config change (`model.provider` in `pipeline.yaml`), not a rewrite.
+
+### 3. The Drive permission model
+
+Permissions inside a Google shared drive are **strictly expansive** — a member's role
+cannot be *reduced* for a subfolder. So "faculty can edit `2-ready/` but only comment on
+`3-review/`" is impossible within one drive.
+
+| Option | Gives you | Costs |
 |---|---|---|
-| **Drive auth** | Service account added to the shared drive · domain-wide delegation | Prefer the service account: DWD is a much broader grant and harder to justify |
-| **Trigger** | Poll Drive on a schedule · Drive push notifications | Polling is simpler and a 15-minute delay costs nothing here |
-| **Drive permissions** | Two shared drives · one drive with convention | Permissions inside a shared drive are strictly *expansive* — a member's role cannot be reduced for a subfolder, which rules out "comment-only on `3-review/`" in a single drive |
-| **Skill granularity** | One skill per artefact · one pass producing several | One per artefact is easier to review and to version; costs more tokens |
-| **Where drafts land** | A branch per session · a branch per artefact | Per session gives one PR to review, which is likely better for faculty |
-| **Failure handling** | Retry, escalate, or drop | Currently `escalate` after 3. Untested |
+| **Two shared drives** | Real enforcement — faculty genuinely cannot edit a draft | Two bookmarks instead of one |
+| **One drive, convention** | Simpler setup | No enforcement; the pipeline detects edits by content hash and flags them |
+
+This changes the setup instructions faculty receive, so it is worth deciding before the
+ingest stage is written.
+
+### Settled
+
+- **Generation is in the pipeline**, via the Messages API, using the existing skills
+- **One PR per session**, reviewed as a unit
+- **Approval is a GitHub PR review** — free line comments, diff, history, and a merge
+  that means something
+- **Three regeneration attempts**, carrying reviewer feedback, then escalate
 
 ## Layout
 

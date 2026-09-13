@@ -1,49 +1,132 @@
-# pipeline.yaml — which artefacts are generated, from what, by which skill.
+# pipeline.yaml — what the pipeline does with each kind of file.
 #
-# NOT YET IMPLEMENTED. This is the schema the generate stage will read.
-
-version: 1
-
-# --- Artefacts --------------------------------------------------------------
+# NOT YET IMPLEMENTED. This is the schema the pipeline will read.
 #
-# `requires` is the grounding contract: an artefact cannot be generated without
-# its sources. This is what stops the pipeline inventing a post-read for a session
-# that was never recorded.
+# ⚠️ TWO PATHS. This is the thing to understand before reading further.
+#
+#   DIRECT     a file students read, which needs validating and committing.
+#              No model involved. A notebook, an assignment, class notes.
+#
+#   DERIVED    a document generated FROM one or more direct files.
+#              A post-read, an interview bank, an FAQ.
+#
+# A file can be both. A transcript is a deliverable students can search AND the
+# input every post-read is grounded in. That is why `direct` and `derived` are
+# separate lists rather than one list with a flag.
 
-artefacts:
+# ⚠️ THE LISTS BELOW ARE ILLUSTRATIVE, NOT FINAL.
+#
+# Which documents belong in `direct` and which in `derived` is still being
+# decided. What is settled is the SHAPE: two paths, and a file can be on both.
+# Adding or removing an entry is a config change, not a redesign.
+
+version: 2
+
+# ============================================================================
+# DIRECT — validated and committed. No generation.
+# ============================================================================
+#
+# The pipeline's whole job here is: put it in the right place, check it is valid,
+# open a PR. The review step still applies — someone confirms it belongs and is
+# not accidentally a draft.
+
+direct:
+
+  notebook:
+    extensions: [ipynb]
+    produces: batch/sessions/{session}/notebooks/{filename}
+    checks:
+      - outputs_stripped        # committed outputs bloat diffs and leak kernel state
+      - executes_clean          # runs from a fresh kernel, no cell errors
+    review: light
+
+  class-notes:
+    extensions: [md, docx]
+    produces: batch/sessions/{session}/notes.md
+    convert: to_markdown        # docx -> md; md passes through
+    checks: [frontmatter]
+    review: light
+    note: >
+      Hand-authored notes. DISTINCT from the generated `notes` artefact below —
+      if faculty wrote notes, the pipeline must not also generate them. Whichever
+      arrives first wins, and `edited_by_human` protects it afterwards.
 
   transcript:
+    extensions: [vtt, srt, txt, docx]
+    produces: batch/sessions/{session}/transcript.md
+    convert: to_markdown
+    checks: [frontmatter, no_real_names]
+    review: light
+    also_an_input: true         # ← the key flag. Feeds every derived artefact below.
+
+  slides:
+    extensions: [pdf, pptx]
+    produces: batch/sessions/{session}/slides/{filename}
+    checks: []
+    review: light
+    also_an_input: true         # the pre-read is generated from these
+
+  code:
+    extensions: [py, zip]
+    produces: batch/sessions/{session}/code/{filename}
+    checks: [no_secrets]
+    review: light
+    also_an_input: true
+
+  assignment:
+    extensions: [md, docx]
+    produces: activities/briefs/{id}-{slug}.md
+    convert: to_markdown
+    checks: [frontmatter, rubric_exists]
+    review: standard
+    note: >
+      An assignment brief is staff-authored and canonical. Publishing it to
+      Discussions is a separate action (publish-activity.yml), not this pipeline.
+
+# ============================================================================
+# DERIVED — generated from direct files via the Messages API.
+# ============================================================================
+#
+# `requires` is the grounding contract. An artefact whose required inputs are
+# missing is NOT generated — it is reported. This is what stops the pipeline
+# inventing a post-read for a session that was never recorded.
+
+derived:
+
+  transcript-clean:
     skill: transcript-clean
     requires: [transcript]
     produces: batch/sessions/{session}/transcript.md
-    # Cleaning only: fix speaker labels and obvious ASR errors. Never summarise —
-    # a transcript that has been "improved" is no longer evidence of what was said.
     review: light
+    note: >
+      Only runs on a raw ASR transcript. If faculty upload an already-clean one,
+      this is skipped. Cleaning only — never summarising; a transcript that has
+      been "improved" is no longer evidence of what was said.
 
   notes:
     skill: notes
     requires: [transcript]
     produces: batch/sessions/{session}/notes.md
     review: standard
+    skip_if_direct: class-notes    # faculty notes win over generated ones
 
   post-read:
     skill: post-read
     requires: [transcript]
-    optional_inputs: [deck, notes]
+    optional_inputs: [slides, class-notes]
     produces: batch/sessions/{session}/post-read.md
-    # The highest-value generated artefact, because the questions people actually
-    # asked in the room are in the transcript and nowhere else.
     review: careful
 
   pre-read:
     skill: pre-read
-    requires: [deck]
-    optional_inputs: [notes]
+    requires: [slides]
+    optional_inputs: [class-notes]
     produces: batch/sessions/{session}/pre-read.md
-    # Written BEFORE the session, so there is no transcript to ground it. That
-    # makes it the most likely artefact to contain invented content — hence
-    # careful review and the tighter grounding rules in the skill.
     review: careful
+    note: >
+      The riskiest artefact. No transcript exists — the session has not happened —
+      so it is generated from a deck, which is fragmentary by nature. Highest
+      chance of invented content, hence `careful`.
 
   faq:
     skill: faq
@@ -56,54 +139,76 @@ artefacts:
     skill: interview-questions
     requires: [transcript]
     produces: library/interview-bank/questions.yaml
-    mode: append              # never rewrites existing entries
+    mode: append                   # never rewrites or renumbers existing entries
     review: standard
 
   coding-questions:
     skill: coding-questions
     requires: [transcript, code]
-    produces: library/coding-questions/{id}.md
+    produces: library/coding-questions/{id}-{slug}.md
     review: careful
 
   case-study:
     skill: case-study
-    requires: [notes]
-    produces: library/case-studies/{id}.md
-    # Rarely generated well. A case study needs a real surprise, and a transcript
-    # usually does not contain one.
+    requires: [class-notes]
+    produces: library/case-studies/{id}-{slug}.md
     review: careful
     enabled: false
+    note: >
+      Disabled. A case study needs a real surprise, and a transcript usually does
+      not contain one. Generating from thin material produces a story with a moral
+      and no mechanism.
 
-# --- What runs for a session -----------------------------------------------
+# ============================================================================
+# What runs for a session
+# ============================================================================
+#
+# Direct files are always processed — if one arrives, it is committed.
+# These lists say which DERIVED artefacts to attempt.
+
 session_types:
-  standard:  [transcript, notes, post-read, faq, interview-questions]
-  workshop:  [transcript, notes, post-read, coding-questions]
-  guest:     [transcript, notes]        # lighter touch; guest content is theirs
+  standard: [transcript-clean, notes, post-read, faq, interview-questions]
+  workshop: [transcript-clean, notes, post-read, coding-questions]
+  guest:    [transcript-clean, notes]     # lighter touch; guest content is theirs
 
-# --- Model ------------------------------------------------------------------
+# ============================================================================
+# Model
+# ============================================================================
+#
+# ⚠️ PROVIDER UNDECIDED. The generate stage constructs its client in ONE place so
+# that switching between the direct API, Bedrock and Vertex is a config change
+# rather than a rewrite. All three expose the same messages.create surface.
+
 model:
+  provider: anthropic            # anthropic | bedrock | vertex
   name: claude-opus-5
-  max_output_tokens: 8000
-  temperature: 0.2          # low: this is extraction and restructuring, not invention
+  max_tokens: 16000
+  effort: high                   # output_config.effort — low|medium|high|xhigh|max
 
-# --- The regeneration loop --------------------------------------------------
-#
-# Reviewer feedback is carried INTO the next attempt rather than triggering a
-# blind retry, and there is a hard cap. An uncapped regenerate-on-rejection loop
-# burns budget and converges on nothing.
-#
-# The cheaper checkpoint is BEFORE generation — agreeing what a session should
-# produce and from what. Catching a problem in the draft is the expensive place.
+  # Low, deliberately. This is extraction and restructuring, not invention.
+  # Note: sampling parameters are rejected on current models — effort is the lever.
+
+  # Batch API halves the cost and a session's artefacts are not latency-sensitive.
+  # Worth using once volume justifies the extra moving part.
+  use_batch_api: false
+
+# ============================================================================
+# The regeneration loop
+# ============================================================================
 
 retry:
   max_attempts: 3
-  carry_feedback: true
-  on_exhausted: escalate    # assign to a human, never silently give up
+  carry_feedback: true           # reviewer's words go INTO the next attempt
+  on_exhausted: escalate         # assign a human; never silently give up
 
-# --- Cost guard -------------------------------------------------------------
+# ============================================================================
+# Limits
+# ============================================================================
+
 limits:
   max_input_tokens_per_run: 150000
   max_runs_per_day: 20
-  # A transcript longer than this is chunked rather than truncated. Truncation
-  # silently drops the end of a session, which is where the summary usually is.
-  chunk_transcript_over_tokens: 100000
+  chunk_transcript_over_tokens: 100000   # chunk, never truncate — truncation
+                                         # drops the end of a session, which is
+                                         # usually where the summary is
+  max_file_mb: 200
