@@ -354,3 +354,50 @@ def test_github_readme_hijacks_the_front_page(repo):
 def test_github_contents_md_is_fine(repo):
     write(repo / ".github/CONTENTS.md", "# .github\n")
     assert not any("overrides the root README" in m for m in _messages(repo))
+
+
+# ------------------------------------------------- discussion forms
+
+def _with_categories(repo: Path) -> Path:
+    write(repo / ".config/discussion-categories.yaml", """
+        version: 2
+        categories:
+          - {name: "Q&A", slug: q-a, format: ANSWER, description: x, form: q-and-a.yml}
+          - {name: "Help Desk", slug: help-desk, format: ANSWER, description: y}
+    """)
+    write(repo / ".github/DISCUSSION_TEMPLATE/q-and-a.yml", """
+        title: ""
+        labels: []
+        body:
+          - type: input
+            id: topic
+            attributes: {label: Topic}
+    """)
+    return repo
+
+
+def test_form_matching_a_category_is_fine(repo):
+    _with_categories(repo)
+    assert not any("never render" in m for m in _messages(repo))
+
+
+def test_orphan_form_is_caught(repo):
+    """A form whose slug has no category never renders - students get a blank box
+    and the bot has no fields to read. Nothing errors; it just silently does not work."""
+    _with_categories(repo)
+    write(repo / ".github/DISCUSSION_TEMPLATE/no-such-category.yml", """
+        title: ""
+        body:
+          - type: input
+            id: x
+            attributes: {label: X}
+    """)
+    assert any("never render" in m for m in _messages(repo))
+
+
+def test_form_with_unknown_label_is_caught(repo):
+    _with_categories(repo)
+    p = repo / ".github/DISCUSSION_TEMPLATE/q-and-a.yml"
+    p.write_text(p.read_text(encoding="utf-8").replace("labels: []",
+                 'labels: ["type:invented"]'), encoding="utf-8")
+    assert any("unknown label" in m for m in _messages(repo))

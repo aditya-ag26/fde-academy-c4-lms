@@ -92,7 +92,7 @@ the fix, so that the fix has something to be a fix *for*.
 
 ## Where to ask
 
-Questions about this session go in **Doubts — Session**, tagged `S01`.
+Questions about this session go in **Doubts - Session**, tagged `S01`.
 
 Say what you understood, where it broke down, and what you already tried. That last
 part is what turns "I don't get embeddings" into something someone can actually answer.

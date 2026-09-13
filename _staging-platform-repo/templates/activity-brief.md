@@ -80,5 +80,5 @@ Include what was hard and what you would do differently. That is not a formality
 
 ## If you get stuck
 
-Post in **Doubts — Session** tagged `S00`. Being stuck is not a mark against you;
+Post in **Doubts - Session** tagged `S00`. Being stuck is not a mark against you;
 being silently stuck until the deadline is the thing to avoid.

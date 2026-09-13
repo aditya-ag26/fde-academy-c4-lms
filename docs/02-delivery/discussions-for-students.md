@@ -34,13 +34,13 @@ question takes longer to answer than it should.
 |---|---|
 | Submit an assignment | **Assignments** → use the form |
 | Submit a coding question solution | **Coding Questions** |
-| Ask about something in a session | **Doubts — Session** |
-| Ask a general question | **Q&A — General** |
+| Ask about something in a session | **Doubts - Session** |
+| Ask a general question | **Q&A** |
 | Report a wrong or broken document | **[Issues](../../issues/new/choose)**, not Discussions |
 | Access, login or tooling problem | **Help Desk** |
-| Share something you built | **Show & Tell** |
-| Optional practice you did | **Self-Work & Practice** |
-| Find people to work with | **Study Group** |
+| Share something you built | **General** |
+| Optional practice you did | **Self work & Practice** |
+| Find people to work with | **General** |
 | Comment on the batch itself | **Feedback** |
 
 **Issues are the one exception.** An issue is a *defect with a fix and a closed state* —
@@ -154,7 +154,7 @@ Copy-paste these into the Discussions search box:
 | `label:session:S01` | Everything about session 1 |
 | `label:activity:A01` | Everything about assignment A01 |
 | `author:@me` | Your own threads |
-| `category:"Doubts — Session" is:unanswered` | Unanswered session doubts |
+| `category:"Doubts - Session" is:unanswered` | Unanswered session doubts |
 
 ---
 

@@ -104,7 +104,7 @@ and a summary here will drift from it.
 
 ### `## Still stuck?`
 
-One or two lines pointing at **Doubts — Session**, tagged with the session id. Mention
+One or two lines pointing at **Doubts - Session**, tagged with the session id. Mention
 the specific thing most likely to still be stuck, drawn from the transcript.
 
 ## Grounding rules

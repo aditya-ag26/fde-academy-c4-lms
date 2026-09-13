@@ -33,7 +33,7 @@ edited_by_human: false
 | **Due** | No deadline — self-work |
 | **Effort** | ~1 hour |
 | **Review** | None. Post it if you want responses; nobody is assigned to review it. |
-| **Submit** | Discussions → **Self-Work & Practice** (optional) |
+| **Submit** | Discussions → **Self work & Practice** (optional) |
 
 ## What this is
 
@@ -83,7 +83,7 @@ describes what the system does.
 
 Entirely optional, and there is no rubric.
 
-If you do post your ten queries in **Self-Work & Practice**, others get to see query
+If you do post your ten queries in **Self work & Practice**, others get to see query
 sets from domains they do not know — which is more useful than it sounds, because it is
 hard to write a naive query about something you understand well.
 

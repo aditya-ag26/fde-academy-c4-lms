@@ -43,12 +43,12 @@ question takes longer to answer.
 
 | What you have | Where it goes |
 |---|---|
-| A question about a specific session | **Doubts — Session** (names the session) |
-| A general question, not tied to one session | **Q&A — General** |
+| A question about a specific session | **Doubts - Session** (names the session) |
+| A general question, not tied to one session | **Q&A** |
 | An assignment to hand in | **Assignments** (use the form) |
 | A coding question solution | **Coding Questions** |
-| Something you built and want to show | **Show & Tell** |
-| Practice you did that wasn't required | **Self-Work & Practice** |
+| Something you built and want to show | **General** |
+| Practice you did that wasn't required | **Self work & Practice** |
 | Can't log in, tool won't install, access problem | **Help Desk** |
 | Feedback about the batch itself | **Feedback** |
 | A document here is **wrong or broken** | An [issue](../../issues/new/choose), not a Discussion |

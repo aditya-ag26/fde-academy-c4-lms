@@ -43,5 +43,5 @@ form's **revision** stage rather than opening a new one.
 
 ## Questions
 
-**Help Desk** if this creates a problem for you. **Q&A — General** for anything about
+**Help Desk** if this creates a problem for you. **Q&A** for anything about
 the assignment content.

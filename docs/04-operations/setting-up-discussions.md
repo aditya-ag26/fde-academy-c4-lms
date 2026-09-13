@@ -1,188 +1,120 @@
 # Setting up Discussions
 
-A one-time, five-minute job. Do it before anyone is given access.
+> ✅ **Done on `aditya-ag26/fde-academy-c4-lms`.** Ten categories exist, all with the
+> correct format. Verify any time:
+>
+> ```bash
+> python _staging-platform-repo/lmskit/provision.py --repo <owner>/<repo> --categories-only
+> ```
 
-> [!WARNING]
-> **A category's format is permanent.** Once created, an answerable category cannot
-> become a non-answerable one or the reverse — you would have to delete it, which
-> orphans every thread inside. There is no `createDiscussionCategory` in GitHub's API,
-> so this cannot be scripted or corrected later by code. **Get the format right now.**
-
----
-
-## Before you start
-
-**Settings → General → Features → ☑ Discussions**
-
-Then go to **`/discussions/categories`** — or the Discussions tab, then the ✏️ beside
-**Categories** in the left sidebar.
-
-> This is **not** under repository Settings, which is where everyone looks first.
-
-## Step 1 — Delete the defaults you are not keeping
-
-GitHub creates six. Delete these:
-
-- ❌ **General** — a catch-all becomes where things go to be ignored
-- ❌ **Ideas** — this is a course, not a product roadmap
-
-**Keep and rename** the other three (renaming is safe; format is unchanged):
-
-| Keep | Rename to | Format it already has |
-|---|---|---|
-| Announcements | *(no change)* | Announcement ✓ |
-| Q&A | *(no change)* | Q&A (answerable) ✓ |
-| Polls | *(no change)* | Poll ✓ |
-
-## Step 2 — Create the rest
-
-> **Status on `aditya-ag26/fde-academy-c4-lms`:** 9 of 12 exist, **0 with a wrong
-> format**. Still to create: **Show & Tell**, **Study Group**, **Weekly Standup**.
-> Verify any time with `provision.py --categories-only`.
-
-**New category** for each. Copy the name and description exactly; the format column is
-the one that matters.
-
-### 📝 Assignments — **the one students use most**
-
-| | |
-|---|---|
-| **Name** | `Assignments` |
-| **Emoji** | 📝 |
-| **Format** | **Q&A (answerable)** ← required |
-| **Description** | `Hand in your assignments here. One thread per submission — use the form.` |
-
-> Answerable because the reviewer's feedback gets marked, which turns a submission
-> thread into a worked example for the next cohort.
-
-### 🤔 Doubts - Session
-
-| | |
-|---|---|
-| **Name** | `Doubts - Session` |
-| **Emoji** | 🤔 |
-| **Format** | **Q&A (answerable)** |
-| **Description** | `Stuck on something from a specific session? Name the session and say what you already tried.` |
-
-### 💻 Coding Questions
-
-| | |
-|---|---|
-| **Name** | `Coding Questions` |
-| **Emoji** | 💻 |
-| **Format** | **Q&A (answerable)** |
-| **Description** | `Solutions to practice problems from library/coding-questions/.` |
-
-### 🛠️ Help Desk
-
-| | |
-|---|---|
-| **Name** | `Help Desk` |
-| **Emoji** | 🛠️ |
-| **Format** | **Q&A (answerable)** |
-| **Description** | `Access, tooling and admin problems. Not academic — use Q&A or Doubts for those.` |
-
-### 🏋️ Self work & Practice
-
-| | |
-|---|---|
-| **Name** | `Self work & Practice` |
-| **Emoji** | 🏋️ |
-| **Format** | **Open-ended discussion** |
-| **Description** | `Optional practice. No deadline, nobody assigned to review.` |
-
-> Open-ended, not answerable: practice has no single right answer, and an unmarked
-> answerable thread reads as unresolved — which would make voluntary work look like a
-> backlog.
-
-### 🎉 Show & Tell
-
-| | |
-|---|---|
-| **Name** | `Show & Tell` |
-| **Emoji** | 🎉 |
-| **Format** | **Open-ended discussion** |
-| **Description** | `Something you built, something that finally worked.` |
-
-### 👥 Study Group
-
-| | |
-|---|---|
-| **Name** | `Study Group` |
-| **Emoji** | 👥 |
-| **Format** | **Open-ended discussion** |
-| **Description** | `Find people to work with. Staff read this but do not run it.` |
-
-### 📊 Feedback
-
-| | |
-|---|---|
-| **Name** | `Feedback` |
-| **Emoji** | 📊 |
-| **Format** | **Open-ended discussion** |
-| **Description** | `About the batch itself — pace, difficulty, content. This is read.` |
-
-### 🗓️ Weekly Standup
-
-| | |
-|---|---|
-| **Name** | `Weekly Standup` |
-| **Emoji** | 🗓️ |
-| **Format** | **Announcement** |
-| **Description** | `One thread per week: what is on, what is due, what changed.` |
-
-> Announcement format means only people with write access can open a thread. The bot
-> posts here.
+This document is the reference for standing up the **next** batch.
 
 ---
 
-## Step 3 — Set the default category
+## Where the categories page is
 
-On the categories page, set the default category for new discussions to **`Q&A`**.
+**`https://github.com/<owner>/<repo>/discussions/categories`**
 
-Someone who clicks "New discussion" without choosing should land somewhere harmless.
+Or: the **Discussions** tab, then the ✏️ beside **Categories** in the left sidebar.
 
-## Step 4 — Verify
+> It is **not** under repository Settings, which is where everyone looks first.
+
+Discussions themselves are enabled at **Settings → General → Features → ☑ Discussions**.
+
+## ⚠️ Format is permanent
+
+A category's format is fixed when it is created. An answerable category cannot become
+non-answerable, or the reverse, without **deleting** it — which orphans every thread
+inside.
+
+There is no `createDiscussionCategory` mutation in GitHub's API (verified by direct
+test, not just from the docs), so this cannot be scripted or corrected later by code.
+
+**Get the format right the first time.** It is the only irreversible decision here.
+
+---
+
+## The ten categories
+
+| Category | Format | For |
+|---|:--:|---|
+| 📣 **Announcements** | Discussion | Notices, schedule changes. The standup posts here too |
+| 🙏 **Q&A** | **Answerable** | Questions not tied to one session |
+| ❓ **Doubts - Session** | **Answerable** | Stuck on a specific session |
+| 📝 **Assignments** | **Answerable** | Submissions. One thread each |
+| 💻 **Coding Questions** | **Answerable** | Practice problem solutions |
+| 🛠️ **Help Desk** | **Answerable** | Access, tooling, admin. Not academic |
+| 🏋️ **Self work & Practice** | Discussion | Optional practice, no deadline |
+| 📊 **Feedback** | Discussion | About the batch itself |
+| 💬 **General** | Discussion | Catch-all |
+| 🗳️ **Polls** | Poll | Pulse checks |
+
+Full definitions, including why each format was chosen, are in
+[`.config/discussion-categories.yaml`](../../.config/discussion-categories.yaml).
+
+### Why the answerable ones are answerable
+
+A marked answer is what makes a thread reusable next batch, and it is what the FAQ
+harvest reads. An unmarked resolved thread helps nobody afterwards.
+
+### Why the others are not
+
+Practice and feedback have no single right answer. An unmarked answerable thread reads
+as *unresolved*, which would make voluntary work look like a backlog and a piece of
+feedback look like an unhandled complaint.
+
+---
+
+## Things only a human can do
+
+None of these have an API. `provision.py` cannot perform or check them — it reports
+category drift and applies labels, and that is the extent of what is automatable.
+
+| Task | Where |
+|---|---|
+| **Create or delete a category** | `/discussions/categories` |
+| **Change a format** | Not possible. Delete and recreate, orphaning its threads |
+| **Set the default category** | On the categories page. Not a REST field — tested |
+| **Pin a discussion** | Open it → right sidebar → **Pin discussion**. Maintainers only, max 4. There is no `pinDiscussion` mutation; `pinIssue` exists, discussions have no equivalent |
+| **Reorder the sidebar** | Drag on the categories page |
+
+**Worth pinning:** the welcome thread, and the current week's standup once it exists.
+
+**The default category is a nicety, not a blocker.** Students using the forms land in
+the right category regardless, and the "Where do I go" table in the README covers the
+rest.
+
+---
+
+## What provision.py does do
 
 ```bash
-python _staging-platform-repo/lmskit/provision.py \
-  --repo aditya-ag26/fde-academy-c4-lms
+# Check categories against the spec, change nothing
+python _staging-platform-repo/lmskit/provision.py --repo <owner>/<repo> --categories-only
+
+# Apply the labels from .config/labels.yaml
+python _staging-platform-repo/lmskit/provision.py --repo <owner>/<repo> --apply
 ```
 
-It reports any category that is missing or has the wrong format — while it is still
-empty and the fix is free. Then apply labels:
+It reports a wrong format **while the category is still empty and the fix is free**,
+which is the whole reason it exists.
 
-```bash
-python _staging-platform-repo/lmskit/provision.py \
-  --repo aditya-ag26/fde-academy-c4-lms --apply
-```
-
-## Step 5 — Pin the welcome thread
-
-Discussions → the welcome thread → **Pin discussion**. Pin the current Weekly Standup
-too, once it exists.
-
----
-
-## Why the forms only work after this
+## Why the forms need the categories
 
 `.github/DISCUSSION_TEMPLATE/*.yml` are matched to categories **by filename slug**.
-`assignment-submission.yml` only appears once a category with that slug exists — until
-then students get a blank box instead of the structured form, and the bot has no fields
-to read.
+Until a category with the matching slug exists, students get a blank text box instead of
+the structured form — and the bot has no fields to read.
 
-| Form file | Needs category |
-|---|---|
-| `assignment-submission.yml` | Assignments |
-| `doubt.yml` | Doubts - Session |
-| `coding-question.yml` | Coding Questions |
-| `help-desk.yml` | Help Desk |
-| `q-and-a.yml` | Q&A |
-| `show-and-tell.yml` | Show & Tell |
-| `feedback.yml` | Feedback |
+| Form | Category | Slug |
+|---|---|---|
+| `assignment-submission.yml` | Assignments | `assignments` |
+| `doubt.yml` | Doubts - Session | `doubts-session` |
+| `coding-question.yml` | Coding Questions | `coding-questions` |
+| `help-desk.yml` | Help Desk | `help-desk` |
+| `q-and-a.yml` | Q&A | `q-a` |
+| `feedback.yml` | Feedback | `feedback` |
+| `show-and-tell.yml` | *no category* | — unused |
 
-## The full reference
-
-[`.config/discussion-categories.yaml`](../../.config/discussion-categories.yaml) holds
-every category with the reasoning behind its format, and is what `provision.py` checks
-against.
+`show-and-tell.yml` has no matching category and is currently inert. Either create a
+**Show & Tell** category or delete the form; an unused form is a trap for whoever reads
+this next.

@@ -46,5 +46,5 @@ edited_by_human: false
 
 ## Still stuck?
 
-**Doubts — Session**, tagged `S00`. Say what you understood, where it broke
+**Doubts - Session**, tagged `S00`. Say what you understood, where it broke
 down, and what you already tried.

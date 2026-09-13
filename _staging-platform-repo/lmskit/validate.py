@@ -75,7 +75,45 @@ class Validator:
         self.check_interview_bank()
         self.check_links()
         self.check_readme_precedence()
+        self.check_discussion_forms()
         return self.problems
+
+    def check_discussion_forms(self) -> None:
+        """A form is matched to a category by its filename slug.
+
+        A form whose slug has no category never renders - students get a blank text
+        box and the bot has no fields to read. Nothing errors; it just quietly does
+        not work, which is the worst failure mode for something student-facing.
+        """
+        import yaml as _yaml
+
+        forms_dir = self.root / ".github" / "DISCUSSION_TEMPLATE"
+        spec_path = self.root / ".config" / "discussion-categories.yaml"
+        if not forms_dir.is_dir() or not spec_path.exists():
+            return
+
+        spec = _yaml.safe_load(spec_path.read_text(encoding="utf-8")) or {}
+        slugs = {c.get("slug") for c in spec.get("categories", [])}
+        declared = {c.get("form") for c in spec.get("categories", []) if c.get("form")}
+
+        for f in sorted(forms_dir.glob("*.yml")):
+            data = _yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+            if "body" not in data:
+                self.fail(f, "discussion form has no `body`")
+            for lab in data.get("labels") or []:
+                if lab not in self.label_names_cached:
+                    self.fail(f, f"form sets unknown label '{lab}'")
+            if f.stem not in slugs and f.name not in declared:
+                self.fail(
+                    f,
+                    f"no category has slug '{f.stem}' - this form will never render. "
+                    f"Create the category, or delete the form.")
+
+    @property
+    def label_names_cached(self) -> set[str]:
+        if not hasattr(self, "_labels"):
+            self._labels = self.m.label_names
+        return self._labels
 
     def check_readme_precedence(self) -> None:
         """Guard the front page.

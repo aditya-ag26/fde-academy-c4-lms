@@ -1,69 +1,66 @@
-# discussion-categories.yaml — the expected Discussions layout.
+# discussion-categories.yaml — the Discussions layout, as it exists.
 #
-# ⚠️ THESE CANNOT BE CREATED BY API.
+# ⚠️ CATEGORIES CANNOT BE CREATED OR CONVERTED BY API.
 #
-# There is no `createDiscussionCategory` mutation in the GitHub GraphQL API and no
-# REST equivalent. Categories are created BY HAND in:
+# There is no `createDiscussionCategory` mutation in GitHub's GraphQL API and no REST
+# equivalent — verified by direct test, not just by reading the docs. Categories are
+# created by hand at:
 #
-#     Settings → Discussions → Categories → New category
+#     https://github.com/<owner>/<repo>/discussions/categories
 #
-# This file is therefore two things:
-#   1. the checklist a human works through when provisioning a repository, and
-#   2. the expected state that `.github/workflows/provision.yml` VERIFIES against
-#      (it queries repository.discussionCategories and reports drift).
+# That page is NOT under repository Settings, which is where everyone looks first.
 #
-# ⚠️ FORMAT IS PERMANENT. A category's format is fixed when it is created. An
-# ANSWER category cannot later become DISCUSSION, or the reverse, without deleting
-# and recreating it — which orphans every thread inside it. Get it right the first
-# time; that is why each choice below is justified.
+# ⚠️ FORMAT IS PERMANENT. A category's format is fixed at creation. An answerable
+# category cannot become non-answerable, or the reverse, without deleting it — which
+# orphans every thread inside.
+#
+# This file is the expected state that provision.py verifies against. It describes
+# what EXISTS; if you add a category, add it here in the same change.
 #
 # Source: https://docs.github.com/en/graphql/guides/using-the-graphql-api-for-discussions
 
-version: 1
+version: 2
 
-# GitHub allows at most 25 categories per repository. Twelve is deliberate: enough
-# that "where does this go" has one obvious answer, few enough that the sidebar is
-# readable without scrolling.
+# Ten categories. Fewer than the twelve originally specified, deliberately: each one
+# has to earn its place, and "where does this go" needs one obvious answer.
 
 categories:
 
   # --- Staff broadcast -------------------------------------------------------
   - name: "Announcements"
+    slug: announcements
     emoji: "📣"
-    format: ANNOUNCEMENT
-    description: "Notices, schedule changes, deadline extensions. Staff post; anyone can comment."
+    format: DISCUSSION
+    description: "Updates from maintainers"
     why_this_format: >
-      ANNOUNCEMENT restricts who can open a thread to those with write access. A
-      notice channel anyone can post in stops being a notice channel.
+      Kept as GitHub created it. Note this is NOT the restricted ANNOUNCEMENT format —
+      anyone can open a thread here. In practice that is fine for a cohort this size,
+      and it cannot be changed now without deleting the category.
     posted_by: staff
-    automation: ".github/workflows/notices.yml posts here from batch/notices/"
-
-  - name: "Weekly Standup"
-    emoji: "🗓️"
-    format: ANNOUNCEMENT
-    description: "One thread per week: what is on, what is due, what changed."
-    why_this_format: >
-      Same reason as Announcements. The bot is the author, and a read-only cohort
-      needs a heartbeat that nobody has to remember to write.
-    posted_by: bot
-    automation: ".github/workflows/weekly-standup.yml"
+    automation: >
+      notices.yml posts here from batch/notices/. The weekly standup also posts here,
+      since there is no separate Weekly Standup category.
 
   # --- Answerable: the threads that become reference material ---------------
   - name: "Q&A"
-    emoji: "❓"
+    slug: q-a
+    emoji: "🙏"
     format: ANSWER
-    description: "Questions not tied to one session."
+    description: "Ask the community for help"
     why_this_format: >
-      ANSWER enables marking a best answer. A marked answer is what makes the
-      thread reusable next batch and is what the FAQ harvest reads.
+      ANSWER enables marking a best answer, which is what makes a thread reusable next
+      batch and what the FAQ harvest reads.
     posted_by: anyone
     form: q-and-a.yml
     default_labels: ["type:question", "status:needs-answer"]
 
   - name: "Doubts - Session"
-    emoji: "🤔"
+    slug: doubts-session
+    emoji: "❓"
     format: ANSWER
-    description: "Stuck on something from a specific session. Names the session."
+    description: >
+      Stuck on something from a specific session? Name the session and say what you
+      already tried.
     why_this_format: >
       Answerable, and the session id makes it findable by everyone who was in that
       session — which is where the peers most able to answer are.
@@ -72,103 +69,110 @@ categories:
     default_labels: ["type:doubt", "status:needs-answer"]
 
   - name: "Assignments"
+    slug: assignments
     emoji: "📝"
     format: ANSWER
-    description: "Assignment submissions. One thread per submission."
+    description: "Hand in your assignments here. One thread per submission — use the form."
     why_this_format: >
       The thread IS the deliverable. ANSWER lets the reviewer's feedback be marked,
       which turns a submission thread into a worked example for the next batch.
     posted_by: anyone
     form: assignment-submission.yml
     default_labels: ["type:submission", "status:needs-answer"]
-    automation: "publish-activity.yml posts the brief thread; discussions-bot.yml acknowledges"
+    automation: "publish-activity.yml posts the brief; discussions-bot.yml acknowledges"
 
   - name: "Coding Questions"
+    slug: coding-questions
     emoji: "💻"
     format: ANSWER
-    description: "Solutions to practice problems from library/coding-questions/."
+    description: "Solutions to practice problems from library/coding-questions/"
     why_this_format: "Answerable — the best solution gets marked and stays useful."
     posted_by: anyone
     form: coding-question.yml
     default_labels: ["type:submission", "status:needs-answer"]
 
   - name: "Help Desk"
+    slug: help-desk
     emoji: "🛠️"
     format: ANSWER
-    description: "Access, tooling, admin. NOT academic."
+    description: "Access, tooling and admin problems. Not academic — use Q&A or Doubts for those."
     why_this_format: >
-      Answerable because these have a definite resolution. Kept separate from
-      academic questions because different people watch it and the urgency differs
-      — a student who cannot log in is fully blocked.
+      Answerable because these have a definite resolution. Separate from academic
+      questions because different people watch it and the urgency differs — a student
+      who cannot log in is fully blocked.
     posted_by: anyone
     form: help-desk.yml
     default_labels: ["type:access", "status:needs-staff"]
 
   # --- Open-ended: no single right answer ------------------------------------
   - name: "Self work & Practice"
+    slug: self-work-practice
     emoji: "🏋️"
     format: DISCUSSION
-    description: "Optional practice, no deadline, nobody assigned to review."
+    description: "Optional practice. No deadline, nobody assigned to review."
     why_this_format: >
-      DISCUSSION, not ANSWER. Practice has no single correct answer, and an
-      unmarked ANSWER thread reads as unresolved — which would make voluntary work
-      look like a backlog.
-    posted_by: anyone
-    default_labels: []
-
-  - name: "Show & Tell"
-    emoji: "🎉"
-    format: DISCUSSION
-    description: "Finished work, projects, things that finally worked."
-    why_this_format: "Nothing to answer. Deliberately the lightest category here."
-    posted_by: anyone
-    form: show-and-tell.yml
-    default_labels: []
-
-  - name: "Study Group"
-    emoji: "👥"
-    format: DISCUSSION
-    description: "Peer coordination — finding people to work with, arranging sessions."
-    why_this_format: >
-      DISCUSSION, and deliberately staff-light. Students need somewhere that is
-      theirs; staff read it but do not run it.
+      Not answerable, on purpose. Practice has no single right answer, and an unmarked
+      answerable thread reads as unresolved — which would make voluntary work look like
+      a backlog.
     posted_by: anyone
     default_labels: []
 
   - name: "Feedback"
+    slug: feedback
     emoji: "📊"
     format: DISCUSSION
-    description: "About the batch itself: pace, difficulty, content, logistics."
+    description: "About the batch itself — pace, difficulty, content. This is read."
     why_this_format: >
-      DISCUSSION. Feedback is not a question with an answer, and marking one reply
-      as 'the answer' to a complaint would be the wrong signal entirely.
+      Feedback is not a question with an answer, and marking one reply as "the answer"
+      to a complaint would be the wrong signal entirely.
     posted_by: anyone
     form: feedback.yml
     default_labels: []
     note: >
-      The form states plainly that this is read and by whom. A feedback channel
-      nobody confirms is read gets used twice and then abandoned.
+      The description says plainly that it is read. A feedback channel nobody confirms
+      is read gets used twice and then abandoned.
+
+  - name: "General"
+    slug: general
+    emoji: "💬"
+    format: DISCUSSION
+    description: "Chat about anything and everything here"
+    why_this_format: "GitHub default, kept."
+    posted_by: anyone
+    default_labels: []
+    note: >
+      A catch-all becomes where things go to be ignored. Staff should redirect anything
+      that has a better home — a question to Q&A, a session doubt to Doubts — rather
+      than answering it here, or the specific categories go quiet and this one fills up.
 
   - name: "Polls"
+    slug: polls
     emoji: "🗳️"
     format: POLL
-    description: "Quick pulse checks: pace, topic preference, session timing."
+    description: "Take a vote from the community"
     why_this_format: >
-      POLL. One click is the only feedback mechanism most students will ever use,
-      and a poll gets a response rate a thread never will.
+      One click is the only feedback mechanism most students will ever use, and a poll
+      gets a response rate a thread never will.
     posted_by: staff
     default_labels: []
 
-# --- Provisioning checklist ------------------------------------------------
-# Worked through once, by a human, in Settings → Discussions.
-# Categories are managed at /discussions/categories - NOT under repository Settings,
-# which is where everyone looks first.
-setup_checklist:
-  - "Settings → General → Features → tick Discussions"
-  - "Go to /discussions/categories (not Settings - this trips everyone up)"
-  - "Delete the defaults you are not keeping (General, Ideas)"
-  - "Create each category above: name, emoji, description, FORMAT (permanent)"
-  - "Set the default category for new threads to Q&A"
-  - "Run .github/workflows/provision.yml to apply labels and verify this list"
-  - "Pin the welcome thread and the current Weekly Standup"
-  - "Confirm students have READ access only — no triage, no write"
+# --- What is NOT here, and what follows -------------------------------------
+not_created:
+  - name: "Weekly Standup"
+    consequence: >
+      The bot posts its weekly standup in Announcements instead. Announcements is not
+      the restricted ANNOUNCEMENT format here, so students can also post there — worth
+      watching, but not worth deleting and recreating a category over.
+  - name: "Show & Tell"
+    consequence: "Finished work goes in General or Self work & Practice."
+  - name: "Study Group"
+    consequence: "Peer coordination goes in General."
+
+# --- Things only a human can do ---------------------------------------------
+# None of these have an API. provision.py cannot check or perform them.
+manual_only:
+  - "Creating or deleting a category"
+  - "Changing a category's format"
+  - "Setting the default category for new discussions"
+  - "Pinning a discussion (pinIssue exists; there is no pinDiscussion)"
+  - "Reordering categories in the sidebar"

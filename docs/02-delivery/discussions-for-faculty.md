@@ -38,24 +38,31 @@ drift out of date with what actually happened.
 
 Full definitions in [`.config/discussion-categories.yaml`](../../.config/discussion-categories.yaml).
 
-> ⚠️ **A category's format is permanent.** `ANSWER` cannot become `DISCUSSION` later
-> without deleting and recreating the category, which orphans its threads. Categories
-> also cannot be created by API — they are made by hand in Settings.
+> ⚠️ **A category's format is permanent.** An answerable category cannot become a plain
+> discussion later without deleting and recreating it, which orphans its threads.
+> Categories also cannot be created by API — they are made by hand at
+> `/discussions/categories`, which is *not* under repository Settings.
 
 | Category | Format | Why this format |
 |---|---|---|
-| Announcements | ANNOUNCEMENT | Staff-post-only. A notice channel anyone can post in is not one |
-| Weekly Standup | ANNOUNCEMENT | Bot-authored; the cohort's heartbeat |
-| Q&A — General | ANSWER | Marked answers drive the FAQ harvest and next-batch reuse |
-| Doubts — Session | ANSWER | Answerable, and findable by everyone in that session |
-| Assignments | ANSWER | The thread is the deliverable; marked feedback becomes a worked example |
-| Coding Questions | ANSWER | Best solution gets marked and stays useful |
-| Help Desk | ANSWER | Definite resolution; different watchers, different urgency |
-| Self-Work & Practice | DISCUSSION | No single right answer — an unmarked ANSWER thread reads as a backlog |
-| Show & Tell | DISCUSSION | Nothing to answer |
-| Study Group | DISCUSSION | Students need somewhere that is theirs. Staff-light on purpose |
-| Feedback | DISCUSSION | Marking a reply as "the answer" to a complaint is the wrong signal |
-| Polls | POLL | One click is the only feedback most students will ever give |
+| Announcements | Discussion | Notices and the weekly standup. **Note:** this is not the restricted ANNOUNCEMENT format — students can post here too |
+| Q&A | **Answerable** | Marked answers drive the FAQ harvest and next-batch reuse |
+| Doubts - Session | **Answerable** | Answerable, and findable by everyone in that session |
+| Assignments | **Answerable** | The thread is the deliverable; marked feedback becomes a worked example |
+| Coding Questions | **Answerable** | Best solution gets marked and stays useful |
+| Help Desk | **Answerable** | Definite resolution; different watchers, different urgency |
+| Self work & Practice | Discussion | No single right answer — an unmarked answerable thread reads as a backlog |
+| Feedback | Discussion | Marking a reply as "the answer" to a complaint is the wrong signal |
+| General | Discussion | Catch-all. **Redirect out of it** — see below |
+| Polls | Poll | One click is the only feedback most students will ever give |
+
+**General needs active management.** A catch-all becomes where things go to be ignored.
+When something lands there that has a better home — a question, a session doubt — point
+at the right category rather than answering in place, or the specific ones go quiet.
+
+**There is no Show & Tell or Study Group category.** Finished work and peer coordination
+both go in General. If that proves to be the wrong call, creating a category later is
+cheap; the format is the only irreversible part.
 
 ## Labels — who applies what
 
@@ -149,7 +156,7 @@ surprised by something posted under the organisation's identity.**
 | Thread created | Acknowledges, validates ids and deadline, labels, writes a machine tag | `discussions-bot.yml` |
 | Comment with a command | Runs it, replies | `discussions-bot.yml` |
 | Daily | Deadline reminders, overdue labels, **unanswered-thread escalation** | `due-dates.yml` |
-| Monday | Posts the standup thread | `weekly-standup.yml` |
+| Monday | Posts the standup thread **in Announcements** | `weekly-standup.yml` |
 | Notice merged | Posts it to Announcements | `notices.yml` |
 | Brief merged | Creates or re-syncs the activity thread | `publish-activity.yml` |
 | Sunday | Drafts FAQ entries from verified answers as a PR | `faq-harvest.yml` |

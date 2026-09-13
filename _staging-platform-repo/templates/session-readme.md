@@ -66,5 +66,5 @@ edited_by_human: false
 
 ## Where to ask
 
-Questions about this session go in **Doubts — Session**, tagged `S00`.
+Questions about this session go in **Doubts - Session**, tagged `S00`.
 Say what you understood, where it broke down, and what you already tried.

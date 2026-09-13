@@ -130,7 +130,7 @@ determines how many near-duplicates you create in the first place.
 
 ## Still stuck?
 
-**Doubts — Session**, tagged `S01`.
+**Doubts - Session**, tagged `S01`.
 
 Say what you understood, where it broke down, and what you already tried. If the
 cosine arithmetic is the sticking point, paste your numbers — it is almost always a

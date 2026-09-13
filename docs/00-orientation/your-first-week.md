@@ -77,7 +77,7 @@ In order:
 1. **Search Discussions first.** Someone has often asked already. Try
    `is:unanswered label:topic:setup` or just the error message.
 2. **Check the session's post-read.** It answers the questions asked in the room.
-3. **Post in Doubts — Session**, naming the session. Say what you understood, where it
+3. **Post in Doubts - Session**, naming the session. Say what you understood, where it
    broke down, and **what you already tried** — that last one is what gets you a fast
    answer.
 4. **Comment `/staff`** if the thread stalls, or it is urgent.
@@ -128,4 +128,4 @@ exactly this.
 Post in **Help Desk**. It is for access, tooling and admin problems, and no question
 there is too basic.
 
-If it is about content, **Q&A — General**.
+If it is about content, **Q&A**.

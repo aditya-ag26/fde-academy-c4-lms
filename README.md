@@ -46,11 +46,11 @@ open a second one — your review history lives in the first.
 
 | | |
 |--|--|
-| 🤔 | Stuck on a session → **Doubts** |
+| 🤔 | Stuck on a session → **Doubts - Session** |
 | ❓ | Any other question → **Q&A** |
 | 💻 | Practice solutions → **Coding Questions** |
 | 🛠️ | Can't log in → **Help Desk** |
-| 🎉 | Something you built → **Show & Tell** |
+| 🎉 | Something you built → **General** |
 | 📊 | About the batch → **Feedback** |
 
 A document that is *wrong* is an

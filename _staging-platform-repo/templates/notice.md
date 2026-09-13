@@ -32,7 +32,7 @@ action should say it has none, or everyone re-reads it looking for one. -->
 
 ## Questions
 
-Ask in **Help Desk** if this is about access or logistics, **Q&A — General** if
+Ask in **Help Desk** if this is about access or logistics, **Q&A** if
 it is about content.
 
 <!-- FILING: batch/notices/YYYY-MM-DD-slug.md, date matching the frontmatter.

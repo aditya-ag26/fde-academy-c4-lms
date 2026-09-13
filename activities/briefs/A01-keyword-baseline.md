@@ -146,7 +146,7 @@ analysis is one of the fastest ways to spot the failure shape you missed.
 
 ## If you get stuck
 
-**Doubts — Session**, tagged `S01`. Say what you understood, where it broke down, and
+**Doubts - Session**, tagged `S01`. Say what you understood, where it broke down, and
 what you already tried.
 
 Being stuck is not a mark against you. Being silently stuck until the 21st is the thing
