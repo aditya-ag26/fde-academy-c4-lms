@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Secrets — credentials are NEVER files in this project.
+# These patterns are a safety net, not a sanctioned location.
+# See docs/04-operations/access-control.md
+*.pem
+*.key
+service-account*.json
+credentials*.json
+client_secret*.json
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Local build/scratch
+.cache/
+*.tmp
+_scratch/

@@ -1,0 +1,38 @@
+# `batch/sessions/`
+
+One folder per session. This index is **generated** — do not hand-edit it.
+
+## Folder naming: `S<NN>-<YYYY-MM-DD>-<slug>`
+
+```
+S07-2026-09-13-retrieval-basics/
+```
+
+The number gives order, the date answers "when was this", the slug answers "what was
+it". It sorts correctly, it greps cleanly, and a student who remembers only the date
+can still find it.
+
+The `id` and `date` in the session's frontmatter **must match the folder name**. CI
+checks this, because a renamed folder with stale frontmatter breaks every generated
+index silently.
+
+## What a session folder contains
+
+```
+S07-2026-09-13-retrieval-basics/
+├── README.md        # the session hub — carries the frontmatter contract
+├── pre-read.md      # sent before
+├── post-read.md     # sent after
+├── notes.md         # human-authored
+├── transcript.md    # raw material, not a deliverable
+├── slides/
+├── notebooks/
+├── code/
+└── assets/
+```
+
+Not every session has every artefact. Record what is present in the `artefacts:` map in
+the session README's frontmatter — including the ones deliberately `absent`, so that
+"missing" and "not applicable" stay distinguishable.
+
+See [frontmatter.md](../../docs/01-authoring/frontmatter.md) for the full schema.

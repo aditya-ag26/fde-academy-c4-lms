@@ -1,0 +1,11 @@
+# Normalise line endings. Content is authored on Windows, Mac and Linux, and read by
+# CI on Linux; without this, every cross-platform edit shows as a whole-file diff.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.zip binary
+*.ipynb text eol=lf

@@ -1,0 +1,80 @@
+# batch.yaml — the root manifest for one cohort.
+#
+# Everything generated reads from this file: the dashboard README, the calendar,
+# session indexes, deadline reminders, the weekly standup thread.
+#
+# A NEW BATCH IS: copy the template repo, rewrite this file, run provision.
+# Nothing else should need editing to stand up a new cohort.
+#
+# ALL VALUES BELOW ARE PLACEHOLDERS. They are deliberately obvious fakes so that an
+# unconfigured repo fails loudly rather than shipping someone else's dates.
+
+version: 1
+
+batch:
+  slug: fde-c4                      # must match .config/identity.json batch_slug
+  name: "FDE Academy C4"            # PLACEHOLDER
+  display_name: "FDE Academy C4 LMS"
+  cohort_size: 0                    # PLACEHOLDER — 0 means unset
+  timezone: Asia/Kolkata            # PLACEHOLDER — all dates/times below are in this zone
+
+  # PLACEHOLDER DATES. The dashboard computes "current week" from start_date, so a
+  # wrong value here makes every generated page wrong.
+  start_date: 2026-01-05
+  end_date: 2026-06-30
+
+# Which tracks from .config/taxonomy.yaml this batch actually runs.
+# Must be a subset of taxonomy.tracks[].id
+tracks:
+  - ai-engineering
+  - data-foundations
+
+# When sessions happen. Used to generate the calendar and to predict the next session.
+schedule:
+  pattern: weekly                   # weekly | biweekly | custom
+  days: [monday, thursday]          # PLACEHOLDER
+  start_time: "19:00"               # PLACEHOLDER, 24h, in batch.timezone
+  duration_min: 180                 # PLACEHOLDER
+  # Dates with no session: holidays, breaks. Calendar generation skips these.
+  exceptions: []
+
+# Deadlines and nudges. Read by .github/workflows/due-dates.yml
+deadlines:
+  default_activity_days: 7          # brief released -> due, unless the brief overrides
+  reminder_days_before: [3, 1]      # when to nudge on an open activity
+  overdue_grace_days: 2             # after this, label the thread status:overdue
+  unanswered_alert_hours: 24        # a thread with no reply this long is escalated
+
+# GitHub handles only. NO email, NO real names, NO phone numbers — see
+# docs/04-operations/access-control.md. The roster lives in the PRIVATE repo.
+staff:
+  owner: REPLACE-ME-handle          # final escalation, owns the repo
+  leads:
+    - handle: REPLACE-ME-handle
+      name: "PLACEHOLDER Lead"
+      tracks: [ai-engineering]
+  instructors:
+    - handle: REPLACE-ME-handle
+      name: "PLACEHOLDER Instructor"
+      tracks: [data-foundations]
+  # Who the bot pings on /staff escalation, in order.
+  escalation_order: [REPLACE-ME-handle]
+
+# Where students go. Rendered into START-HERE.md and the dashboard quick links.
+links:
+  discussions: "https://github.com/REPLACE-ME-org/batch-fde-c4/discussions"
+  ask_a_question: "https://github.com/REPLACE-ME-org/batch-fde-c4/discussions/new?category=q-a-general"
+  submit_work: "https://github.com/REPLACE-ME-org/batch-fde-c4/discussions/new?category=assignments"
+  help_desk: "https://github.com/REPLACE-ME-org/batch-fde-c4/discussions/new?category=help-desk"
+  calendar: "batch/calendar.md"
+  library: "library/README.md"
+  code_of_conduct: "CODE_OF_CONDUCT.md"
+
+# Feature flags. Lets a batch run before every phase is built.
+features:
+  discussions_bot: true
+  content_pipeline: false           # Drive -> LLM -> PR. Off until Phase 6+ is real.
+  bot_answering: false              # the bot NEVER answers until this is true
+  peer_review: true
+  weekly_standup: true
+  polls: true

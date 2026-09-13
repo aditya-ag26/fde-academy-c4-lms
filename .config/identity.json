@@ -1,0 +1,18 @@
+{
+  "$comment": "Repo identity. Nothing else in this repository hardcodes owner/repo/slug. Every script and workflow reads this file. PLACEHOLDER VALUES — replace before first provision.",
+  "display_name": "FDE Academy C4 LMS",
+  "owner": "REPLACE-ME-org",
+  "repos": {
+    "content": "REPLACE-ME-org/batch-fde-c4",
+    "platform": "REPLACE-ME-org/lms-platform",
+    "private": "REPLACE-ME-org/lms-private"
+  },
+  "batch_slug": "fde-c4",
+  "default_branch": "main",
+  "discussions_enabled": true,
+  "bot": {
+    "app_slug": "REPLACE-ME-lms-bot",
+    "committer_name": "lms-bot",
+    "committer_email": "lms-bot@users.noreply.github.com"
+  }
+}

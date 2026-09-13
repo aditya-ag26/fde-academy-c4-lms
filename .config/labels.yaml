@@ -1,0 +1,125 @@
+# labels.yaml — GitHub labels as data.
+#
+# THE TWO-AXIS RULE:
+#   A Discussion CATEGORY says *what kind of post* this is.
+#   A LABEL says *what it is about*.
+# You need both. With categories alone, nobody can find every thread on one topic.
+#
+# The SAME label set is applied to Discussions AND Issues, so a single query spans
+# both surfaces. This is the point — do not fork the vocabulary per surface.
+#
+# Labels are applied BY THE BOT from structured form fields, not typed by students.
+# Students have read access and cannot label anything.
+#
+# Applied by the provisioning script; this file is the source of truth. A label
+# edited in the GitHub UI will be reverted on the next sync.
+
+version: 1
+
+# Colours are grouped by axis so the label list is readable at a glance.
+palette:
+  track:      "0e8a16"   # green
+  session:    "1d76db"   # blue
+  activity:   "5319e7"   # purple
+  status:     "d93f0b"   # orange
+  type:       "fbca04"   # yellow
+  difficulty: "c5def5"   # pale blue
+  meta:       "bfc4c9"   # grey
+
+labels:
+
+  # --- track:* — subject area. Generated from .config/taxonomy.yaml tracks -----
+  # Keep in sync with taxonomy; CI checks that every track has a label.
+  - name: "track:ai-engineering"
+    color: "0e8a16"
+    description: "Subject area: AI Engineering"
+  - name: "track:data-foundations"
+    color: "0e8a16"
+    description: "Subject area: Data Foundations"
+  - name: "track:systems-design"
+    color: "0e8a16"
+    description: "Subject area: Systems Design"
+  - name: "track:professional-skills"
+    color: "0e8a16"
+    description: "Subject area: Professional Skills"
+
+  # --- session:* — which session a thread relates to --------------------------
+  # Created on demand by the bot as sessions are added, pattern `session:S07`.
+  # Seeded here with one example so the pattern is documented and testable.
+  - name: "session:S01"
+    color: "1d76db"
+    description: "Relates to session S01"
+    pattern: true   # marks this as an exemplar of a bot-generated family
+
+  # --- activity:* — which activity a thread relates to ------------------------
+  # Created on demand by the bot, pattern `activity:A12`.
+  - name: "activity:A01"
+    color: "5319e7"
+    description: "Relates to activity A01"
+    pattern: true
+
+  # --- status:* — where a thread is in its lifecycle --------------------------
+  # Exactly one status label should be present at a time. The bot enforces this.
+  - name: "status:needs-answer"
+    color: "d93f0b"
+    description: "Open question, nobody has answered yet"
+  - name: "status:answered"
+    color: "0e8a16"
+    description: "An answer has been marked by the thread author"
+  - name: "status:needs-staff"
+    color: "b60205"
+    description: "Escalated to staff — peers could not resolve it, or /staff was used"
+  - name: "status:resolved"
+    color: "6f42c1"
+    description: "Closed out; nothing further needed"
+  - name: "status:overdue"
+    color: "b60205"
+    description: "Past its deadline plus the grace period"
+  - name: "status:awaiting-revision"
+    color: "d93f0b"
+    description: "Reviewed, changes requested, waiting on the student"
+
+  # --- type:* — what the thread IS --------------------------------------------
+  - name: "type:submission"
+    color: "fbca04"
+    description: "An activity submission"
+  - name: "type:question"
+    color: "fbca04"
+    description: "A general question, not tied to one session"
+  - name: "type:doubt"
+    color: "fbca04"
+    description: "Session-specific confusion — names a session id"
+  - name: "type:bug-in-docs"
+    color: "fbca04"
+    description: "Something in the repo is wrong, unclear, or broken"
+  - name: "type:access"
+    color: "fbca04"
+    description: "Help Desk: access, tooling, admin. Not academic"
+
+  # --- difficulty:* — from .config/taxonomy.yaml ------------------------------
+  - name: "difficulty:easy"
+    color: "c5def5"
+    description: "Difficulty: easy"
+  - name: "difficulty:medium"
+    color: "c5def5"
+    description: "Difficulty: medium"
+  - name: "difficulty:hard"
+    color: "c5def5"
+    description: "Difficulty: hard"
+
+  # --- meta — culture and curation mechanics ----------------------------------
+  - name: "good-first-answer"
+    color: "bfc4c9"
+    description: "A peer can answer this. Applied to grow the answering culture, not to deflect staff"
+  - name: "faq-candidate"
+    color: "bfc4c9"
+    description: "Flagged for harvest into library/faqs/"
+  - name: "worked-example"
+    color: "bfc4c9"
+    description: "Staff-authored model of a good question or answer. Always footered as faculty-written"
+  - name: "retracted"
+    color: "bfc4c9"
+    description: "A claim that turned out wrong, kept visible with its correction attached. Deleting teaches nobody"
+  - name: "peer-review-owed"
+    color: "bfc4c9"
+    description: "This student owes a peer review on someone else's submission"

@@ -1,0 +1,94 @@
+# taxonomy.yaml — the controlled vocabulary for this LMS.
+#
+# WHY THIS IS FIXED NOW: the content pipeline will later be instructed to emit ONLY
+# these values. Inventing a vocabulary after 300 documents exist is a relabelling
+# project, not an edit. Add values deliberately, via PR; never silently.
+#
+# Every value here is referenced by:
+#   - docs/01-authoring/frontmatter.md  (the schema spec)
+#   - .config/labels.yaml               (GitHub labels derived from tracks/difficulty)
+#   - validation in CI                  (frontmatter values must be in this file)
+
+version: 1
+
+# --- What kind of document is this? -----------------------------------------
+# Set as `type:` in every content file's frontmatter.
+artefact_types:
+  - pre-read            # sent before a session; prepares the student
+  - post-read           # sent after a session; consolidates
+  - notes               # human-authored session notes
+  - transcript          # raw or cleaned recording transcript
+  - case-study          # worked real-world scenario, library/case-studies/
+  - interview-question  # library/interview-bank/
+  - coding-question     # library/coding-questions/
+  - faq                 # library/faqs/, usually harvested from Discussions
+  - notice              # batch/notices/, dated announcement
+  - activity-brief      # activities/briefs/
+  - rubric              # activities/rubrics/
+  - slides              # deck, usually a pointer to an asset
+  - notebook            # executable .ipynb
+
+# --- Subject areas ----------------------------------------------------------
+# PLACEHOLDER — replace with this batch's real tracks before content authoring.
+# Used as `track:` in frontmatter and as `track:*` GitHub labels.
+tracks:
+  - id: ai-engineering
+    label: AI Engineering
+    description: Placeholder track. Replace with a real subject area.
+  - id: data-foundations
+    label: Data Foundations
+    description: Placeholder track. Replace with a real subject area.
+  - id: systems-design
+    label: Systems Design
+    description: Placeholder track. Replace with a real subject area.
+  - id: professional-skills
+    label: Professional Skills
+    description: Placeholder track. Replace with a real subject area.
+
+# --- How hard is it? --------------------------------------------------------
+# Applies to coding questions, interview questions, and activities.
+difficulty:
+  - easy
+  - medium
+  - hard
+
+# --- What kind of work is being asked for? ----------------------------------
+# Set as `type:` in an activity brief's frontmatter.
+activity_types:
+  - assignment   # graded/reviewed, has a deadline
+  - self-work    # optional practice, no deadline
+  - group        # team deliverable
+  - reading      # read-and-respond, no code
+
+# --- Where is a session in its lifecycle? -----------------------------------
+# Set as `status:` in a session README. Drives the dashboard and calendar.
+session_status:
+  - scheduled    # in the future; pre-read may exist, post-read must not
+  - delivered    # happened; post-read and notes expected
+  - archived     # closed out; no further edits expected
+
+# --- Who reviews a submission? ----------------------------------------------
+# Set as `review:` in an activity brief. The Discussions bot routes on this.
+review_modes:
+  - peer    # another student reviews; bot assigns and tracks the obligation
+  - staff   # a named staff member reviews
+  - bot     # automated checks only
+  - none    # submission is acknowledged, not reviewed
+
+# --- Submission route -------------------------------------------------------
+# Set as `submit_via:` in an activity brief.
+#
+# NOTE: `discussion` is the only route in use. Students have READ access only and
+# never open a PR against this repo. `pr` exists for staff-authored activities only
+# and must not appear in any student-facing brief. See docs/04-operations/access-control.md
+submit_via:
+  - discussion
+  - pr
+  - both
+
+# --- Is an artefact present, and how did it get there? ----------------------
+# Used in a session README's `artefacts:` map.
+artefact_presence:
+  - generated   # produced by the content pipeline, approved by a human
+  - authored    # written by a human directly
+  - absent      # deliberately not present
