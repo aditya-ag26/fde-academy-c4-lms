@@ -94,7 +94,55 @@ The build is complete. What remains is configuration and content, not constructi
 | **Fill in `.config/batch.yaml`** | Real dates, tracks and staff handles. Everything generated reads from it, so a placeholder date makes every page wrong |
 | **Replace the example content** | S01, A01, A02 and CS-01 exist to demonstrate the shape. They are marked as examples; delete them once two or three real sessions exist |
 | **Decide the open questions below** | Each one is a policy call, not an engineering one |
+| **Decide whether to build the pipeline** | Designed, not built — deliberately. See *The content pipeline* below |
 | **Wire the bot to `lmskit.discussions`** | The logic is written and tested; the workflow still logs what it would do. Needs the categories to exist first, which they now do |
+
+## The content pipeline — a decision, not a gap
+
+**Designed and specified. No implementation, deliberately.** If you are reading the
+empty `automation/src/` directories as abandoned work, they are not — Phase 6 specified
+scaffolding only, and the reason is worth stating.
+
+### What exists
+
+| | |
+|---|---|
+| **Eight skill prompts** | The valuable part. Writing them forced decisions about what a good pre-read *is* — a content question, not an engineering one |
+| **Three config schemas** | The four-zone Drive model, retry cap, approver routing |
+| **Five stage specifications** | What each stage reads, writes, and must not do |
+
+### Why it stops there
+
+**There is nothing to run it on.** The pipeline turns transcripts into documents, and no
+real session has happened yet. Tuning prompts against fabricated input tunes them for
+fabricated input.
+
+**The cheaper checkpoint is earlier.** Agreeing what a session should produce, and from
+what, costs less than catching a problem in a generated draft. A shared document saying
+"S07 produces a post-read and three interview questions, from the transcript" captures
+much of the value with no build at all.
+
+**Two decisions are still open**, and both shape the code rather than following from it:
+
+| Question | Options | Why it matters |
+|---|---|---|
+| **Build it at all, and when** | Run the prompts by hand for 2–3 sessions first · build ingest+generate now · build everything · park it | Running them manually tells you which artefacts faculty actually approve, which is the thing worth automating |
+| **Drive permissions** | Two shared drives · one drive with convention | Permissions inside a shared drive are strictly *expansive* — a member's role cannot be reduced for a subfolder, so "comment-only on `3-review/`" is impossible in one drive. This changes the setup instructions faculty receive |
+
+**Both are open for discussion rather than decided.** The scaffolding is deliberately
+cheap to abandon if the answer is "not this way".
+
+### A suggestion, not a decision
+
+Run the skill prompts **by hand** on the first two or three real sessions. That answers,
+with evidence rather than guesswork:
+
+- Does the output pass faculty review?
+- How long does reviewing a generated draft actually take?
+- Which artefacts are worth automating? (Likely post-read and FAQ. Likely not
+  case-study, which already ships disabled for this reason.)
+
+Then build only what earned it.
 
 ## Before students are given access
 

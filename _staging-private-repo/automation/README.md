@@ -1,6 +1,11 @@
 # `automation/` — the content pipeline · PRIVATE REPO
 
-Drive → generate → review → repo. **Scaffolding only: no implementation code yet.**
+Drive → generate → review → repo.
+
+> **Scaffolding only, and whether to build it is itself an open question.**
+> No implementation code exists, deliberately. See
+> [STATUS.md](../../docs/09-design-notes/STATUS.md#the-content-pipeline--a-decision-not-a-gap)
+> for why, and what would need deciding first.
 
 This directory holds the pipeline's shape, its configuration schema, and its prompts.
 The prompts are the valuable part — writing them forced decisions about what a good

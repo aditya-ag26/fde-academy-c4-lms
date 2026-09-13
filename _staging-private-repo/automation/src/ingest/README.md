@@ -2,6 +2,11 @@
 
 **Not implemented.** This describes what the stage will do.
 
+> **Empty on purpose.** No implementation exists, and whether to build it is an open
+> question — see
+> [STATUS.md](../../../../docs/09-design-notes/STATUS.md#the-content-pipeline--a-decision-not-a-gap).
+> This README is the specification, not a placeholder for missing work.
+
 ## What it will do
 
 1. List files in the Drive **`2-ready/`** zone (the inbox is deliberately ignored).

@@ -2,6 +2,11 @@
 
 **Not implemented.** This describes what the stage will do.
 
+> **Empty on purpose.** No implementation exists, and whether to build it is an open
+> question — see
+> [STATUS.md](../../../../docs/09-design-notes/STATUS.md#the-content-pipeline--a-decision-not-a-gap).
+> This README is the specification, not a placeholder for missing work.
+
 ## What it will do
 
 1. Open a pull request with the drafts for one session.
