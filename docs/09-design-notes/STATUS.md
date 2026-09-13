@@ -2,7 +2,7 @@
 
 Where this is, honestly. For reviewers, and for whoever picks it up next.
 
-**Last updated:** 2026-09-13 · **Phases complete:** 3 of 8
+**Last updated:** 2026-09-13 · **Phases complete:** 4 of 8
 
 ---
 
@@ -40,8 +40,8 @@ which is why nothing else hardcodes the repo name.
 | 1 | Skeleton and schemas | ✅ | Tree, 50 directory READMEs, 4 config contracts, frontmatter spec, access-control doc |
 | 2 | Templates and a worked example | ✅ | 8 templates, one complete session, 2 activities + rubric, case study, notice, question bank |
 | 3 | Discussions surface | ✅ | 12 categories defined, 41 labels on four axes, 7 forms, bot library, 9 workflows, 4 delivery docs, 5 seeded threads |
-| 4 | Platform tooling | ⬜ | `validate.py`, `dashboard.py` — currently CI stubs |
-| 5 | Workflows (real) | 🟡 | Files exist; most log what they would do |
+| 4 | Platform tooling | ✅ | `manifest`, `validate`, `dashboard` — real, 65 tests, running in CI |
+| 5 | Workflows | 🟡 | 9 files; CI is fully real, the Discussions/publish ones still log |
 | 6 | Automation scaffolding | ⬜ | Drive → LLM → approval → repo pipeline |
 | 7 | Entry points | 🟡 | START-HERE done; orientation docs pending |
 | 8 | Governance layer | 🟡 | Governance docs done; glossary and style guide pending |
@@ -50,8 +50,12 @@ which is why nothing else hardcodes the repo name.
 
 - **Content validates.** Phase 1 and 2 self-checks pass — frontmatter, taxonomy
   compliance, id formats, cross-references, rubric weights, link resolution.
-- **Three CI jobs are real**, not stubs, and pass on GitHub's runners:
-  `labels-in-sync`, `forms-valid`, and `tests` (36 pytest cases).
+- **Every CI job is real** and passes on GitHub's runners: `validate`,
+  `dashboard-fresh`, `tests` (65 cases), `labels-in-sync`, `forms-valid`.
+  No stubs remain in the correctness path.
+- **The repo maintains itself.** `lmskit.dashboard` regenerates the front page,
+  calendar, session index and activity catalogue from frontmatter; `--check` fails
+  CI if any has drifted from its sources.
 - **The bot library is tested logic**, not a sketch. The loop guard, the sanitiser, the
   machine-tag round trip and command detection all behave correctly under test.
 - **The decision-record checker works** — ported from the reference repo's `decide`
