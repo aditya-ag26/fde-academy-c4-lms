@@ -20,10 +20,19 @@ GitHub permissions are whole-repo. A folder named `private/` in a repository a s
 can read is fully readable by that student. There is no hidden folder — only a
 different repository.
 
-## Before sharing the content repo with students
+## What actually matters here
 
-**Move this directory out and delete it here.** This is not optional and not a
-formality; leaving it in place with real content defeats the entire access model.
+Students get **read** access, so everything in this directory is readable by them. That
+is acceptable for configuration and tooling, and **not** acceptable for anything held
+back until a date.
+
+> **Nothing unreleased is ever committed here.**
+> Solutions, answer-bearing rubrics and labelled datasets are pushed **after** the
+> deadline they belong to — see
+> [access-control.md](../docs/04-operations/access-control.md#releasing-solutions).
+
+Deleting a file later does not undo this: git history is permanent, so a solution
+committed early stays retrievable from the earlier commit.
 
 ## Credentials are never files
 

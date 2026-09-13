@@ -50,7 +50,7 @@ a vendored copy.
 
 | Thing | Why it cannot live in the content repo |
 |---|---|
-| **Unreleased solutions** | Students have read access. A folder named `solutions/` is fully readable to them. Solutions are published to the content repo by an action *after* the deadline. |
+| **Unreleased solutions** | Students have read access to every file, so a solution held in this repo is readable however it is hidden. **Not pushed until the deadline passes** — see Releasing solutions below. |
 | **`people/`** — roster, routing | Roster data about people, even handles-only, is not student-facing. |
 | **Automation config** | Approver lists, Drive folder ids, pipeline settings. Credentials are never files at all — they are org/repo secrets. |
 | **Rubrics that contain answers** | Rubrics are published *by default* (see below). One that gives the answer away is the exception and moves here. |
@@ -201,15 +201,47 @@ leaves a live credential behind.
 
 ## Releasing solutions
 
-Solutions live in the private repo until their deadline passes.
+### The rule — confirmed
 
-1. Author the solution in the private repo alongside the brief it answers.
-2. After the deadline, a scheduled action copies it into the content repo as a pull
-   request.
-3. A human merges. The merge is the publication.
+> **A solution is not pushed to this repository until its deadline has passed.**
 
-Do not keep solutions in the content repo "unlinked". Students have read access to
-every file, linked or not.
+This is the whole control, and it is sufficient. Students have read access to every
+file in the repository, so the only reliable way to keep a solution from being read
+early is for it not to be here yet.
+
+**What this means in practice:**
+
+1. Author the solution wherever you like — locally, or in the private repo alongside
+   the brief it answers. Not in a branch of this repo: branches are readable too.
+2. After the deadline passes, push it (or merge the PR that adds it).
+3. The push **is** the publication. There is no second gate.
+
+### Why "unlinked" is not a strategy
+
+Do not commit a solution early and leave it unreferenced, expecting nobody to find it.
+
+- Read access covers **every file**, linked or not
+- The file list, search, and the commit history all surface it
+- Deleting it later does not help: **git history is permanent**, and the content stays
+  retrievable from the earlier commit
+
+A folder named `solutions/` in a repo a student can read is a solutions folder a student
+can read.
+
+### The same rule applies to anything held back
+
+Not just solutions. A rubric that gives away the answer, a dataset with the labels in
+it, a worked example intended for after an exercise — same rule. If it must not be read
+yet, it is not pushed yet.
+
+### Automating it
+
+`.github/workflows/release-solutions.yml` can do this on a schedule: it reads each
+brief's `due:` date and opens a PR adding the solution once that date has passed. A
+human merges.
+
+This is worth building once there are several activities, because the failure mode it
+prevents — someone pushing a solution on the wrong day — is silent and unrecoverable.
 
 ---
 
@@ -222,6 +254,6 @@ every file, linked or not.
 | Can a student open an issue? | Yes. |
 | Can a student mark an answer? | On their own thread, yes. Verified answers are staff-only. |
 | Can I hide a folder from students? | **No.** Different repo, or not protected. |
-| Where do solutions live? | Private repo, released by an action after the deadline. |
+| Where do solutions live? | Anywhere but here, until the deadline passes. The push after the deadline is the publication. |
 | Where do real names and emails live? | Not in any of these repos. Handles only. |
 | Is `CODEOWNERS` access control? | No. Review routing only. |

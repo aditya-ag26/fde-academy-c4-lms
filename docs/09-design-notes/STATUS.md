@@ -21,7 +21,12 @@ structure is built around that.
 | | |
 |---|---|
 | **Now** | `aditya-ag26/fde-academy-c4-lms` — personal staging, public, for internal review |
-| **Later** | The organisation's account, private, with `_staging-*` extracted to their own repos |
+| **Later** | The organisation's account, private |
+
+**On the `_staging-*` folders.** They hold code destined for the platform and private
+repos. Keeping them here is fine: students get **read** access, so tooling code being
+visible costs nothing. What matters is that nothing *unreleased* sits in the tree —
+solutions are pushed after the deadline, never held here early.
 
 Switching is a two-line edit to [`.config/identity.json`](../../.config/identity.json),
 which is why nothing else hardcodes the repo name.
@@ -34,7 +39,7 @@ which is why nothing else hardcodes the repo name.
 |:--:|---|:--:|---|
 | 1 | Skeleton and schemas | ✅ | Tree, 50 directory READMEs, 4 config contracts, frontmatter spec, access-control doc |
 | 2 | Templates and a worked example | ✅ | 8 templates, one complete session, 2 activities + rubric, case study, notice, question bank |
-| 3 | Discussions surface | ✅ | 12 categories defined, 25 labels, 7 forms, bot library, 9 workflows, 4 delivery docs |
+| 3 | Discussions surface | ✅ | 12 categories defined, 41 labels on four axes, 7 forms, bot library, 9 workflows, 4 delivery docs, 5 seeded threads |
 | 4 | Platform tooling | ⬜ | `validate.py`, `dashboard.py` — currently CI stubs |
 | 5 | Workflows (real) | 🟡 | Files exist; most log what they would do |
 | 6 | Automation scaffolding | ⬜ | Drive → LLM → approval → repo pipeline |
@@ -45,11 +50,17 @@ which is why nothing else hardcodes the repo name.
 
 - **Content validates.** Phase 1 and 2 self-checks pass — frontmatter, taxonomy
   compliance, id formats, cross-references, rubric weights, link resolution.
-- **Two CI jobs are real**, not stubs: `labels-in-sync` and `forms-valid` catch a
-  taxonomy/label mismatch or a form referencing a label that does not exist.
+- **Three CI jobs are real**, not stubs, and pass on GitHub's runners:
+  `labels-in-sync`, `forms-valid`, and `tests` (36 pytest cases).
 - **The bot library is tested logic**, not a sketch. The loop guard, the sanitiser, the
   machine-tag round trip and command detection all behave correctly under test.
-- **Every Discussion form parses** and every label it sets exists.
+- **The decision-record checker works** — ported from the reference repo's `decide`
+  gate. Catches a falsifier that names the conclusion instead of an observation, with
+  half its tests guarding against false positives.
+- **Discussions are live and seeded**: five worked-example threads, four marked and
+  verified as answered, labelled across all four axes. Every one footered as
+  faculty-written.
+- **41 labels applied** to the live repository via `provision.py`.
 
 ## What is deliberately not built
 
@@ -57,7 +68,7 @@ which is why nothing else hardcodes the repo name.
 |---|---|
 | **The bot answering questions** | A wrong answer under the org's identity is worse than silence. Gated behind `features.bot_answering`. See [bot-policy.md](../02-delivery/bot-policy.md) |
 | **The content pipeline** | Phase 6. The schema reserves provenance fields so generated content is traceable from day one rather than backfilled |
-| **Solutions** | They belong in the private repo. A folder here would be readable by every student |
+| **Solutions** | Not pushed until the deadline passes. Students can read every file, so absence is the only reliable control — see [access-control.md](../04-operations/access-control.md#releasing-solutions) |
 | **A progress database** | Progress is a machine tag inside bot comments. Nothing to sync, nothing to drift |
 | **A leaderboard** | Ranking students on a shared forum mostly measures free time. GitHub's native "most helpful" is enough |
 
@@ -67,15 +78,18 @@ which is why nothing else hardcodes the repo name.
 
 Not optional, in this order:
 
-- [ ] **Move `_staging-platform-repo/` and `_staging-private-repo/`** to their own repos
-      and delete them here. Folder structure is not a permission boundary
-- [ ] **Set visibility to private** — the LICENSE is proprietary
+- [ ] **Confirm students have read access only** — this is the control everything else
+      rests on. No write, no triage.
+- [ ] **Check nothing unreleased is in the tree** — solutions, answer-bearing rubrics,
+      labelled datasets. These are not pushed until their deadline passes
+- [ ] **Set visibility to private** — the LICENSE is proprietary, and this is the point
+      at which that starts to matter
 - [ ] **Fill in `.config/batch.yaml`**: real dates, tracks, staff handles
 - [ ] **Update `.config/identity.json`** to the org repos
 - [ ] **Create the 12 Discussion categories by hand** (no API exists) — see
       [`discussion-categories.yaml`](../../.config/discussion-categories.yaml).
       **Formats are permanent; get them right first time**
-- [ ] **Run `provision.yml`** to apply the 25 labels and verify the categories
+- [ ] **Run `provision.yml`** to apply the labels and verify the categories
 - [ ] **Branch protection on `main`**, required checks, reviewer count set to the number
       of people who will actually review
 - [ ] **Confirm students have read access only** — no write, no triage
@@ -91,6 +105,7 @@ Left to a human, not invented:
 | **Real tracks** — the taxonomy has four placeholders | Before content authoring |
 | **Peer review assignment** — random, or by track? | Before the first assignment |
 | **Late work policy** — the bot labels overdue; what happens next is a person's call | Before the first deadline |
+| **Auto-grading** — decided against for now; human review plus the decision gate. Revisit once real submissions show which checks would pay for themselves | Reviewed after batch 1 |
 | **Drive permission model** — two shared drives, or one with convention | Phase 6 |
 
 ---
