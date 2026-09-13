@@ -2,7 +2,7 @@
 
 Where this is, honestly. For reviewers, and for whoever picks it up next.
 
-**Last updated:** 2026-09-13 · **Phases complete:** 6 of 8
+**Last updated:** 2026-09-13 · **Phases complete:** 8 of 8
 
 ---
 
@@ -43,8 +43,8 @@ which is why nothing else hardcodes the repo name.
 | 4 | Platform tooling | ✅ | `manifest`, `validate`, `dashboard` — real, 65 tests, running in CI |
 | 5 | Workflows | ✅ | 11 files. CI, dashboard, notebooks and housekeeping real; Discussions/publish ones stubbed pending the bot |
 | 6 | Automation scaffolding | ✅ | 8 skill prompts, 3 config schemas, 5 stage specs, 2 staff docs. No implementation, per spec |
-| 7 | Entry points | 🟡 | START-HERE, first-week guide, authoring workflow done |
-| 8 | Governance layer | 🟡 | Governance docs done; glossary and style guide pending |
+| 7 | Entry points | ✅ | START-HERE, first-week guide, glossary, authoring workflow |
+| 8 | Governance layer | ✅ | Code of Conduct, Security, Contributing, style guide, review guide, archiving, glossary, enriched folder READMEs |
 
 ## What genuinely works today
 
@@ -85,6 +85,17 @@ which is why nothing else hardcodes the repo name.
 
 ---
 
+## What to do next
+
+The build is complete. What remains is configuration and content, not construction.
+
+| | Why |
+|---|---|
+| **Fill in `.config/batch.yaml`** | Real dates, tracks and staff handles. Everything generated reads from it, so a placeholder date makes every page wrong |
+| **Replace the example content** | S01, A01, A02 and CS-01 exist to demonstrate the shape. They are marked as examples; delete them once two or three real sessions exist |
+| **Decide the open questions below** | Each one is a policy call, not an engineering one |
+| **Wire the bot to `lmskit.discussions`** | The logic is written and tested; the workflow still logs what it would do. Needs the categories to exist first, which they now do |
+
 ## Before students are given access
 
 Not optional, in this order:
@@ -97,10 +108,9 @@ Not optional, in this order:
       at which that starts to matter
 - [ ] **Fill in `.config/batch.yaml`**: real dates, tracks, staff handles
 - [ ] **Update `.config/identity.json`** to the org repos
-- [ ] **Create the 12 Discussion categories by hand** (no API exists) — see
-      [`discussion-categories.yaml`](../../.config/discussion-categories.yaml).
-      **Formats are permanent; get them right first time**
-- [ ] **Run `provision.yml`** to apply the labels and verify the categories
+- [x] ~~**Create the Discussion categories by hand**~~ — done. Ten exist, all with the
+      correct format, which is the part that cannot be fixed later
+- [x] ~~**Apply the labels**~~ — done. 41 applied via `provision.py`
 - [ ] **Branch protection on `main`**, required checks, reviewer count set to the number
       of people who will actually review
 - [ ] **Confirm students have read access only** — no write, no triage
