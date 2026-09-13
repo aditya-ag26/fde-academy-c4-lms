@@ -1,0 +1,72 @@
+# sources.yaml — where raw material comes from, and which session it belongs to.
+#
+# Faculty will never open a terminal. Drive is their interface to this repository,
+# not merely an inbox, so the folder layout below is a UI and should be treated as
+# one: obvious names, no ambiguity about where a file goes.
+#
+# NOT YET IMPLEMENTED. This is the schema the ingest stage will read.
+
+version: 1
+
+# --- The Drive layout -------------------------------------------------------
+#
+# Four zones. A file's zone IS its state, so moving a file between folders is the
+# only state transition anyone has to learn — no forms, no status fields, no
+# separate tracker to keep in sync.
+#
+#   1-inbox-raw/      faculty drop recordings, decks, scratch notes here
+#   2-ready/          faculty MOVE a file here when it is ready to be processed
+#   3-review/         the pipeline writes drafts here; faculty comment
+#   4-archive/        processed sources, kept for provenance
+#
+# THE MOVE IS THE TRIGGER. Dropping a file in 1-inbox-raw does nothing. Moving it
+# to 2-ready is what says "this is finished, use it". That distinction matters:
+# a half-uploaded recording in an inbox must not start a generation run.
+
+drive:
+  # Shared drive, never a personal My Drive: ownership must survive staff turnover,
+  # and a service account cannot own files at all.
+  shared_drive_id: REPLACE-ME-drive-id
+
+  zones:
+    inbox:   REPLACE-ME-folder-id     # 1-inbox-raw
+    ready:   REPLACE-ME-folder-id     # 2-ready
+    review:  REPLACE-ME-folder-id     # 3-review
+    archive: REPLACE-ME-folder-id     # 4-archive
+
+  # The service account's client_email, added as a member of the shared drive with
+  # Content manager. Service accounts have no storage quota and cannot own files,
+  # so they MUST write into a shared drive.
+  #
+  # The key itself is a SECRET, never a file in any repository.
+  service_account_email: REPLACE-ME@REPLACE-ME.iam.gserviceaccount.com
+
+# --- Mapping a file to a session -------------------------------------------
+#
+# Filename convention, because it is the only thing faculty reliably control and
+# it needs no extra tooling:
+#
+#     S07-transcript.vtt
+#     S07-deck.pdf
+#     S07-notes.docx
+#
+# Anything that does not match goes to needs_triage and is reported, never guessed
+# at. A wrong session id silently attaches content to the wrong week, which is
+# worse than a file sitting unprocessed.
+
+naming:
+  pattern: "^(?P<session>S\\d{2})-(?P<kind>[a-z-]+)\\.(?P<ext>[a-z0-9]+)$"
+  on_mismatch: report        # report | ignore  — never "guess"
+
+kinds:
+  transcript: [vtt, srt, txt, docx]
+  deck:       [pdf, pptx]
+  notes:      [docx, md, txt]
+  code:       [py, ipynb, zip]
+
+# --- Limits -----------------------------------------------------------------
+limits:
+  max_file_mb: 200
+  # A session with no transcript cannot produce a post-read. The run reports the
+  # gap rather than generating something ungrounded.
+  require_transcript_for: [post-read, notes, faq]

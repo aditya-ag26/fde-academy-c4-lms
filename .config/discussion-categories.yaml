@@ -49,7 +49,7 @@ categories:
     automation: ".github/workflows/weekly-standup.yml"
 
   # --- Answerable: the threads that become reference material ---------------
-  - name: "Q&A — General"
+  - name: "Q&A"
     emoji: "❓"
     format: ANSWER
     description: "Questions not tied to one session."
@@ -60,7 +60,7 @@ categories:
     form: q-and-a.yml
     default_labels: ["type:question", "status:needs-answer"]
 
-  - name: "Doubts — Session"
+  - name: "Doubts - Session"
     emoji: "🤔"
     format: ANSWER
     description: "Stuck on something from a specific session. Names the session."
@@ -105,7 +105,7 @@ categories:
     default_labels: ["type:access", "status:needs-staff"]
 
   # --- Open-ended: no single right answer ------------------------------------
-  - name: "Self-Work & Practice"
+  - name: "Self work & Practice"
     emoji: "🏋️"
     format: DISCUSSION
     description: "Optional practice, no deadline, nobody assigned to review."
@@ -161,11 +161,14 @@ categories:
 
 # --- Provisioning checklist ------------------------------------------------
 # Worked through once, by a human, in Settings → Discussions.
+# Categories are managed at /discussions/categories - NOT under repository Settings,
+# which is where everyone looks first.
 setup_checklist:
   - "Settings → General → Features → tick Discussions"
-  - "Delete the default categories you are not keeping (General, Ideas, Show and tell, Polls, Q&A)"
+  - "Go to /discussions/categories (not Settings - this trips everyone up)"
+  - "Delete the defaults you are not keeping (General, Ideas)"
   - "Create each category above: name, emoji, description, FORMAT (permanent)"
-  - "Set the default category for new threads to Q&A — General"
+  - "Set the default category for new threads to Q&A"
   - "Run .github/workflows/provision.yml to apply labels and verify this list"
   - "Pin the welcome thread and the current Weekly Standup"
   - "Confirm students have READ access only — no triage, no write"

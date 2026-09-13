@@ -1,0 +1,109 @@
+# pipeline.yaml — which artefacts are generated, from what, by which skill.
+#
+# NOT YET IMPLEMENTED. This is the schema the generate stage will read.
+
+version: 1
+
+# --- Artefacts --------------------------------------------------------------
+#
+# `requires` is the grounding contract: an artefact cannot be generated without
+# its sources. This is what stops the pipeline inventing a post-read for a session
+# that was never recorded.
+
+artefacts:
+
+  transcript:
+    skill: transcript-clean
+    requires: [transcript]
+    produces: batch/sessions/{session}/transcript.md
+    # Cleaning only: fix speaker labels and obvious ASR errors. Never summarise —
+    # a transcript that has been "improved" is no longer evidence of what was said.
+    review: light
+
+  notes:
+    skill: notes
+    requires: [transcript]
+    produces: batch/sessions/{session}/notes.md
+    review: standard
+
+  post-read:
+    skill: post-read
+    requires: [transcript]
+    optional_inputs: [deck, notes]
+    produces: batch/sessions/{session}/post-read.md
+    # The highest-value generated artefact, because the questions people actually
+    # asked in the room are in the transcript and nowhere else.
+    review: careful
+
+  pre-read:
+    skill: pre-read
+    requires: [deck]
+    optional_inputs: [notes]
+    produces: batch/sessions/{session}/pre-read.md
+    # Written BEFORE the session, so there is no transcript to ground it. That
+    # makes it the most likely artefact to contain invented content — hence
+    # careful review and the tighter grounding rules in the skill.
+    review: careful
+
+  faq:
+    skill: faq
+    requires: [transcript]
+    optional_inputs: [discussions]
+    produces: library/faqs/by-topic/{topic}.md
+    review: standard
+
+  interview-questions:
+    skill: interview-questions
+    requires: [transcript]
+    produces: library/interview-bank/questions.yaml
+    mode: append              # never rewrites existing entries
+    review: standard
+
+  coding-questions:
+    skill: coding-questions
+    requires: [transcript, code]
+    produces: library/coding-questions/{id}.md
+    review: careful
+
+  case-study:
+    skill: case-study
+    requires: [notes]
+    produces: library/case-studies/{id}.md
+    # Rarely generated well. A case study needs a real surprise, and a transcript
+    # usually does not contain one.
+    review: careful
+    enabled: false
+
+# --- What runs for a session -----------------------------------------------
+session_types:
+  standard:  [transcript, notes, post-read, faq, interview-questions]
+  workshop:  [transcript, notes, post-read, coding-questions]
+  guest:     [transcript, notes]        # lighter touch; guest content is theirs
+
+# --- Model ------------------------------------------------------------------
+model:
+  name: claude-opus-5
+  max_output_tokens: 8000
+  temperature: 0.2          # low: this is extraction and restructuring, not invention
+
+# --- The regeneration loop --------------------------------------------------
+#
+# Reviewer feedback is carried INTO the next attempt rather than triggering a
+# blind retry, and there is a hard cap. An uncapped regenerate-on-rejection loop
+# burns budget and converges on nothing.
+#
+# The cheaper checkpoint is BEFORE generation — agreeing what a session should
+# produce and from what. Catching a problem in the draft is the expensive place.
+
+retry:
+  max_attempts: 3
+  carry_feedback: true
+  on_exhausted: escalate    # assign to a human, never silently give up
+
+# --- Cost guard -------------------------------------------------------------
+limits:
+  max_input_tokens_per_run: 150000
+  max_runs_per_day: 20
+  # A transcript longer than this is chunked rather than truncated. Truncation
+  # silently drops the end of a session, which is where the summary usually is.
+  chunk_transcript_over_tokens: 100000

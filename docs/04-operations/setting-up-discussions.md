@@ -14,25 +14,31 @@ A one-time, five-minute job. Do it before anyone is given access.
 
 **Settings → General → Features → ☑ Discussions**
 
-Then go to **Settings → Discussions** (or the ⚙️ on the Discussions tab).
+Then go to **`/discussions/categories`** — or the Discussions tab, then the ✏️ beside
+**Categories** in the left sidebar.
+
+> This is **not** under repository Settings, which is where everyone looks first.
 
 ## Step 1 — Delete the defaults you are not keeping
 
-GitHub creates six. Delete these three:
+GitHub creates six. Delete these:
 
-- ❌ **General** — everything has a better home; a catch-all becomes where things go to be ignored
+- ❌ **General** — a catch-all becomes where things go to be ignored
 - ❌ **Ideas** — this is a course, not a product roadmap
-- ❌ **Show and tell** — recreated below with a clearer name
 
 **Keep and rename** the other three (renaming is safe; format is unchanged):
 
 | Keep | Rename to | Format it already has |
 |---|---|---|
 | Announcements | *(no change)* | Announcement ✓ |
-| Q&A | **Q&A — General** | Q&A (answerable) ✓ |
+| Q&A | *(no change)* | Q&A (answerable) ✓ |
 | Polls | *(no change)* | Poll ✓ |
 
-## Step 2 — Create the nine missing categories
+## Step 2 — Create the rest
+
+> **Status on `aditya-ag26/fde-academy-c4-lms`:** 9 of 12 exist, **0 with a wrong
+> format**. Still to create: **Show & Tell**, **Study Group**, **Weekly Standup**.
+> Verify any time with `provision.py --categories-only`.
 
 **New category** for each. Copy the name and description exactly; the format column is
 the one that matters.
@@ -49,11 +55,11 @@ the one that matters.
 > Answerable because the reviewer's feedback gets marked, which turns a submission
 > thread into a worked example for the next cohort.
 
-### 🤔 Doubts — Session
+### 🤔 Doubts - Session
 
 | | |
 |---|---|
-| **Name** | `Doubts — Session` |
+| **Name** | `Doubts - Session` |
 | **Emoji** | 🤔 |
 | **Format** | **Q&A (answerable)** |
 | **Description** | `Stuck on something from a specific session? Name the session and say what you already tried.` |
@@ -76,11 +82,11 @@ the one that matters.
 | **Format** | **Q&A (answerable)** |
 | **Description** | `Access, tooling and admin problems. Not academic — use Q&A or Doubts for those.` |
 
-### 🏋️ Self-Work & Practice
+### 🏋️ Self work & Practice
 
 | | |
 |---|---|
-| **Name** | `Self-Work & Practice` |
+| **Name** | `Self work & Practice` |
 | **Emoji** | 🏋️ |
 | **Format** | **Open-ended discussion** |
 | **Description** | `Optional practice. No deadline, nobody assigned to review.` |
@@ -132,7 +138,7 @@ the one that matters.
 
 ## Step 3 — Set the default category
 
-**Settings → Discussions → default category for new discussions → `Q&A — General`**
+On the categories page, set the default category for new discussions to **`Q&A`**.
 
 Someone who clicks "New discussion" without choosing should land somewhere harmless.
 
@@ -168,10 +174,10 @@ to read.
 | Form file | Needs category |
 |---|---|
 | `assignment-submission.yml` | Assignments |
-| `doubt.yml` | Doubts — Session |
+| `doubt.yml` | Doubts - Session |
 | `coding-question.yml` | Coding Questions |
 | `help-desk.yml` | Help Desk |
-| `q-and-a.yml` | Q&A — General |
+| `q-and-a.yml` | Q&A |
 | `show-and-tell.yml` | Show & Tell |
 | `feedback.yml` | Feedback |
 

@@ -1,0 +1,66 @@
+# approvers.yaml — who signs off what.
+#
+# NOT YET IMPLEMENTED. This is the schema the review stage will read.
+#
+# THE RULE THIS ENCODES: generation is cheap and reversible; publication is
+# neither. `approved_by` in a file's frontmatter names a REAL HUMAN, and the
+# pipeline never sets it on its own behalf. That distinction is the entire value
+# of the gate.
+
+version: 1
+
+# GitHub handles only. No names, no email — see docs/04-operations/access-control.md.
+
+# Anyone who can approve anything.
+approvers:
+  - handle: REPLACE-ME-handle
+    tracks: [ai-engineering, data-foundations]
+    can_approve: [all]
+  - handle: REPLACE-ME-handle
+    tracks: [ai-engineering]
+    can_approve: [transcript, notes, post-read, faq]
+
+# --- Routing ----------------------------------------------------------------
+#
+# A draft is assigned to someone who knows the subject. Round-robin across a
+# whole faculty produces reviews from people who cannot judge the content, which
+# is worse than a slower queue.
+
+routing:
+  by: track                 # track | artefact | round-robin
+  fallback: owner           # nobody eligible -> the batch owner
+  reminder_after_hours: 48
+  # A draft nobody reviews is a draft that quietly never ships. After this, it is
+  # escalated rather than left in the queue.
+  escalate_after_hours: 120
+
+# --- How much review each artefact needs ------------------------------------
+#
+# Not everything deserves the same scrutiny, and pretending it does means the
+# careful reviews get the same three minutes as the light ones.
+
+levels:
+  light:
+    description: Skim for obvious errors. Approve unless something is wrong.
+    approvals_required: 1
+  standard:
+    description: Read fully. Check claims against the source.
+    approvals_required: 1
+  careful:
+    description: >
+      Read fully, check every claim against the transcript, and confirm nothing
+      was invented. For pre-reads especially — there is no transcript to ground
+      them, so they are where fabrication is most likely.
+    approvals_required: 1
+    require_track_match: true
+
+# --- The publication gate ---------------------------------------------------
+#
+# A GitHub Environment with required reviewers. The publish job cannot run until
+# a named person approves it in the Actions UI. This is enforced by GitHub, not
+# by our code, which is the point.
+
+environment:
+  name: content-publish
+  required_reviewers: [REPLACE-ME-handle]
+  wait_timer_minutes: 0

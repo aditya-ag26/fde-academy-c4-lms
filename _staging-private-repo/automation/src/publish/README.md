@@ -1,10 +1,34 @@
-# `publish/` · PRIVATE REPO
+# `publish/` — Merge, behind a human gate · PRIVATE REPO
 
-Merge approved content into the content repo.
+**Not implemented.** This describes what the stage will do.
 
-Goes through a GitHub Environment with required reviewers. Generation is cheap and
-reversible; publication is neither.
+## What it will do
 
-Sets `approved_by` to the **real human** who approved. The pipeline never sets that
-field on its own behalf — the distinction between generated and approved is the whole
-value of the gate.
+1. Wait for PR approval.
+2. Run through the **`content-publish` GitHub Environment**, which has required
+   reviewers — the job cannot start until a named person approves it in the Actions UI.
+3. Set `approved_by` to **the real human** who approved.
+4. Merge.
+5. Trigger the dashboard regeneration.
+
+## Inputs and outputs
+
+| | |
+|---|---|
+| **In** | An approved PR |
+| **Out** | Merged content, `approved_by` set, dashboard refreshed |
+
+## Why two gates
+
+PR review checks **the content**. The Environment gate checks **the act of publishing**.
+They are different questions, and GitHub enforces the second one rather than our code
+doing it — which is the point.
+
+> Generation is cheap and reversible. Publication is neither: it is visible to the whole
+> cohort, and unpublishing does not unsend a notification.
+
+## The one thing that must never happen
+
+**The pipeline must never set `approved_by` on its own behalf.** A generated file that
+nobody approved must stay distinguishable from one a named person signed off. That
+distinction is the entire value of the gate.

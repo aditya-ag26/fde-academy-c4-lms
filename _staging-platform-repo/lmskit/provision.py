@@ -37,6 +37,12 @@ from pathlib import Path
 
 import yaml
 
+# Windows consoles default to cp1252, which cannot encode the tick and arrow
+# characters used below. Without this the script dies on its own success message.
+if sys.stdout.encoding and sys.stdout.encoding.lower() not in ("utf-8", "utf8"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 ROOT = Path(__file__).resolve().parents[2]
 
 GREEN, YELLOW, RED, DIM, BOLD, OFF = (
