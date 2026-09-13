@@ -1,5 +1,10 @@
 # `.github/`
 
+> [!NOTE]
+> **This file is deliberately not named README.md.** GitHub renders
+> `.github/README.md` as the *repository's* front page in preference to the root
+> `README.md`, which would replace the dashboard with this folder's documentation.
+
 Workflows, issue templates, and — most importantly here — Discussion forms.
 
 ```

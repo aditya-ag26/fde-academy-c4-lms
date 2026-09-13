@@ -338,3 +338,19 @@ def test_regenerate_writes_and_is_stable(repo):
     assert "README.md" in first
     assert dashboard.regenerate(repo, date(2026, 1, 20)) == [], \
         "a second run with no source change must write nothing"
+
+
+def test_github_readme_hijacks_the_front_page(repo):
+    """GitHub renders .github/README.md instead of the root one.
+
+    This actually happened: the folder documentation replaced the dashboard as the
+    repository's front page, and it is invisible until someone opens the repo in a
+    browser.
+    """
+    write(repo / ".github/README.md", "# .github\n")
+    assert any("overrides the root README" in m for m in _messages(repo))
+
+
+def test_github_contents_md_is_fine(repo):
+    write(repo / ".github/CONTENTS.md", "# .github\n")
+    assert not any("overrides the root README" in m for m in _messages(repo))

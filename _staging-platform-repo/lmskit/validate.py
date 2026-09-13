@@ -74,7 +74,24 @@ class Validator:
         self.check_notices()
         self.check_interview_bank()
         self.check_links()
+        self.check_readme_precedence()
         return self.problems
+
+    def check_readme_precedence(self) -> None:
+        """Guard the front page.
+
+        GitHub renders .github/README.md as the REPOSITORY's front page in
+        preference to the root README.md. A folder README placed there silently
+        replaces the dashboard with documentation about the .github folder - which
+        is exactly what happened once, and is invisible until someone looks at the
+        repo in a browser.
+        """
+        hijacker = self.root / ".github" / "README.md"
+        if hijacker.exists():
+            self.fail(
+                ".github/README.md",
+                "this file overrides the root README as the repository front page - "
+                "rename it (CONTENTS.md) so the dashboard is what visitors see")
 
     # -------------------------------------------------------------- configs
 
