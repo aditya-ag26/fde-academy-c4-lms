@@ -48,6 +48,22 @@ jobs:
         working-directory: _staging-platform-repo
         run: python -m lmskit.dashboard --root .. --check
 
+  workflow-security:
+    name: Workflow security audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+
+      # Enforces docs/04-operations/security.md. It caught two real violations in
+      # our own bot workflow when first written, which is the point of having it
+      # run on every push rather than being a doc nobody re-reads.
+      - name: Audit workflows
+        run: python _staging-platform-repo/lmskit/audit_workflows.py --root .
+
   labels-in-sync:
     name: Labels match taxonomy
     runs-on: ubuntu-latest

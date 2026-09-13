@@ -1,7 +1,11 @@
 name: Regenerate the dashboard
 
-# A stale dashboard is worse than none, so nothing here requires a human to
-# remember to update it. Everything is derived from frontmatter.
+# A stale dashboard is worse than none — it actively misinforms. Nothing here
+# requires a human to remember anything: everything is derived from the frontmatter
+# that already had to be correct for other reasons.
+#
+# Runs daily so "this week" rolls over on its own, and on merge so a new session
+# appears immediately.
 
 on:
   push:
@@ -10,12 +14,19 @@ on:
       - 'batch/**'
       - 'activities/**'
       - '.config/batch.yaml'
+      - '_staging-platform-repo/lmskit/**'
   schedule:
-    - cron: '0 2 * * *'     # daily, so "this week" rolls over on its own
+    - cron: '0 2 * * *'      # 07:30 IST
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  # Never two regenerations racing to commit. Cancelling in progress is safe —
+  # the next run regenerates from scratch anyway.
+  group: dashboard
+  cancel-in-progress: true
 
 jobs:
   generate:
@@ -25,19 +36,31 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - run: pip install pyyaml
 
       - name: Regenerate
-        run: |
-          echo "::notice::Stub. Becomes lmskit.dashboard."
-          echo "Rewrites ONLY between the DASHBOARD:START/END markers in README.md,"
-          echo "plus batch/calendar.md, batch/sessions/README.md and"
-          echo "activities/catalogue.md."
+        working-directory: _staging-platform-repo
+        run: python -m lmskit.dashboard --root ..
 
-      - name: Commit if changed
+      # Commit only on a real diff. An empty commit every night makes the history
+      # useless for spotting actual content changes — which is the thing you reach
+      # for git log to find.
+      - name: Commit if anything changed
         run: |
-          echo "::notice::Commits only on a real diff - an empty commit every night"
-          echo "makes the history useless for spotting actual content changes."
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "::notice::Dashboard already up to date."
+            exit 0
+          fi
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md batch/calendar.md batch/sessions/README.md \
+                  activities/catalogue.md
+          git commit -m "chore: regenerate dashboard [skip ci]"
+          git push
+          echo "::notice::Dashboard updated."

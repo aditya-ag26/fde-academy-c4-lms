@@ -1,0 +1,136 @@
+name: Housekeeping
+
+# Weekly tidying that nobody will remember to do by hand.
+#
+# The important one is the UNANSWERED report. An unanswered question is the main way
+# a cohort stops trusting a forum — people stop asking, and you never find out why.
+# Everything else here is cosmetic by comparison.
+
+on:
+  schedule:
+    - cron: '0 4 * * MON'    # Monday 09:30 IST, before the standup
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unanswered:
+    name: Report unanswered threads
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      discussions: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Find threads with no human reply
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          # A thread is "unanswered" if nothing but the bot has replied. The bot's
+          # own acknowledgement must not count as an answer, or every submission
+          # looks handled.
+          gh api graphql -f query='
+            query($owner:String!, $name:String!) {
+              repository(owner:$owner, name:$name) {
+                discussions(first:100, orderBy:{field:CREATED_AT, direction:DESC}) {
+                  nodes {
+                    number title url createdAt isAnswered
+                    category { name isAnswerable }
+                    comments(first:20) { nodes { author { login } } }
+                  }
+                }
+              }
+            }' -F owner="${REPO%/*}" -F name="${REPO#*/}" > threads.json
+
+          python - <<'PY'
+          import json, os, datetime as dt
+
+          data = json.load(open('threads.json'))
+          nodes = data['data']['repository']['discussions']['nodes']
+          now = dt.datetime.now(dt.timezone.utc)
+          BOTS = {'github-actions', 'github-actions[bot]'}
+
+          stale = []
+          for d in nodes:
+              if d['isAnswered']:
+                  continue
+              if d['category']['name'] in ('Announcements', 'Weekly Standup', 'Polls'):
+                  continue
+              human = [c for c in d['comments']['nodes']
+                       if c['author'] and c['author']['login'] not in BOTS]
+              if human:
+                  continue
+              created = dt.datetime.fromisoformat(d['createdAt'].replace('Z', '+00:00'))
+              hours = (now - created).total_seconds() / 3600
+              if hours >= 24:
+                  stale.append((hours, d))
+
+          stale.sort(reverse=True, key=lambda x: x[0])
+
+          if not stale:
+              print('No unanswered threads older than 24 hours.')
+              raise SystemExit(0)
+
+          lines = [f'### {len(stale)} thread(s) waiting for a reply', '']
+          for hours, d in stale:
+              age = f'{int(hours)}h' if hours < 48 else f'{int(hours // 24)}d'
+              lines.append(f"- [#{d['number']} {d['title']}]({d['url']}) "
+                           f"· **{age}** · {d['category']['name']}")
+          body = '\n'.join(lines)
+          print(body)
+
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
+              f.write(body + '\n')
+
+          # Visible in the Actions list without opening the run.
+          print(f'::warning::{len(stale)} unanswered thread(s) older than 24h')
+          PY
+
+  orphan-check:
+    name: Content nobody links to
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+
+      - name: Find unreferenced content
+        run: |
+          # Advisory only. A library document nothing points at is usually fine
+          # (it is reference material, found by search) but occasionally it is a
+          # page someone forgot to link from a session.
+          python - <<'PY'
+          import pathlib, re
+
+          root = pathlib.Path('.')
+          linked = set()
+          for md in root.rglob('*.md'):
+              if any(x in md.parts for x in ('.git', '_staging-platform-repo',
+                                             '_staging-private-repo')):
+                  continue
+              for m in re.finditer(r'\]\(([^)#\s]+\.md)\)', md.read_text(
+                      encoding='utf-8', errors='replace')):
+                  linked.add((md.parent / m.group(1)).resolve())
+
+          orphans = []
+          for area in ('library', 'batch'):
+              for md in (root / area).rglob('*.md'):
+                  if md.name == 'README.md' or md.resolve() in linked:
+                      continue
+                  orphans.append(md.as_posix())
+
+          if orphans:
+              print(f'{len(orphans)} file(s) nothing links to:')
+              for o in sorted(orphans):
+                  print(f'  {o}')
+              print('\nAdvisory — reference material is often reached by search.')
+          else:
+              print('Every content file is linked from somewhere.')
+          PY

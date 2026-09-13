@@ -1,0 +1,103 @@
+name: Notebooks run clean
+
+# A notebook that only works in the author's environment is a support ticket waiting
+# to happen, and it always surfaces the night before a deadline. This executes every
+# notebook from a fresh kernel and fails if any cell errors.
+#
+# SECURITY: notebooks in this repository are STAFF-AUTHORED, so this job executes
+# trusted code. It still runs with no secrets and no write permission — there is
+# nothing here worth stealing, and a compromised dependency should not be able to
+# push. Student code is NEVER executed by this workflow; see
+# docs/04-operations/security.md.
+
+on:
+  pull_request:
+    paths: ['**/*.ipynb']
+  push:
+    branches: [main]
+    paths: ['**/*.ipynb']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  execute:
+    name: Execute every notebook
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Find notebooks
+        id: find
+        run: |
+          # Exclude checkpoints, and the staging folders which are not course content.
+          FOUND=$(find . -name '*.ipynb' \
+                    -not -path './.git/*' \
+                    -not -path '*/.ipynb_checkpoints/*' \
+                    -not -path './_staging-*' | sort)
+          if [ -z "$FOUND" ]; then
+            echo "::notice::No notebooks in this repository yet."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            printf '%s\n' "$FOUND"
+          fi
+
+      - name: Install
+        if: steps.find.outputs.found == 'true'
+        run: |
+          pip install nbclient nbformat jupyter-client ipykernel
+          # A notebook that needs more than this should carry its own
+          # requirements.txt beside it, and this step should install that too.
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Execute
+        if: steps.find.outputs.found == 'true'
+        run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r nb; do
+            echo "::group::$nb"
+            if python -m nbclient "$nb" --timeout 300 >/dev/null 2>err.txt; then
+              echo "ok"
+            else
+              fail=1
+              echo "::error file=$nb::notebook failed to execute"
+              tail -20 err.txt
+            fi
+            echo "::endgroup::"
+          done < <(find . -name '*.ipynb' -not -path './.git/*' \
+                     -not -path '*/.ipynb_checkpoints/*' \
+                     -not -path './_staging-*' | sort)
+          exit $fail
+
+      - name: Check outputs are stripped
+        if: steps.find.outputs.found == 'true'
+        run: |
+          # Committed outputs bloat diffs and leak whatever was in the kernel when
+          # the author last ran it — sometimes a token, usually just noise.
+          python - <<'PY'
+          import json, pathlib, sys
+          dirty = []
+          for p in pathlib.Path('.').rglob('*.ipynb'):
+              if any(x in p.parts for x in ('.git', '.ipynb_checkpoints')) \
+                 or str(p).startswith('_staging-'):
+                  continue
+              nb = json.loads(p.read_text(encoding='utf-8'))
+              for c in nb.get('cells', []):
+                  if c.get('outputs') or c.get('execution_count') is not None:
+                      dirty.append(str(p)); break
+          if dirty:
+              print("Notebooks committed with outputs:")
+              for d in dirty:
+                  print(f"  {d}")
+              print("\nStrip them before committing (nbstripout, or Clear All Outputs).")
+              sys.exit(1)
+          print("All notebooks are clean.")
+          PY
