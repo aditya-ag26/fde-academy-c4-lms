@@ -1,10 +1,9 @@
 ---
 title: Decision record
-type: notes
+type: faq
 track: [ai-engineering, data-foundations]
-author: REPLACE-ME-handle
-date: 2026-01-15
-source: post-hoc
+question: How do I write a decision record, and what makes a falsifier real?
+verified_by: REPLACE-ME-handle
 generated: false
 generator: null
 sources: []

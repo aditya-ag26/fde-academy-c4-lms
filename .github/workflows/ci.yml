@@ -26,26 +26,27 @@ jobs:
           python-version: '3.12'
       - run: pip install pyyaml
 
-      # TODO(platform): replace with the reusable workflow once lms-platform exists:
-      #   uses: ORG/lms-platform/.github/workflows/validate.yml@v1
+      # TODO(platform): becomes a reusable workflow call once lms-platform is
+      # split out:  uses: ORG/lms-platform/.github/workflows/validate.yml@v1
       - name: Validate content
-        run: |
-          echo "::notice::Stub. Becomes lmskit.validate."
-          echo "Checks: frontmatter parses, no unknown fields, controlled values in"
-          echo "taxonomy, id formats and uniqueness, cross-references resolve, folder"
-          echo "name matches id+date, released <= due, rubric weights sum, scheduled"
-          echo "sessions have no post-session artefacts, provenance block present."
+        working-directory: _staging-platform-repo
+        run: python -m lmskit.validate --root ..
 
-  links:
-    name: Link check
+  dashboard-fresh:
+    name: Dashboard is up to date
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check links
-        run: |
-          echo "::notice::Stub. Internal links must resolve; external ones are"
-          echo "reported but do not fail the build — a dead third-party link is not"
-          echo "a reason to block a content PR."
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+
+      # Catches a dashboard that drifted from the frontmatter it is generated
+      # from. --check writes nothing; it reports and exits non-zero.
+      - name: Check generated files match their sources
+        working-directory: _staging-platform-repo
+        run: python -m lmskit.dashboard --root .. --check
 
   labels-in-sync:
     name: Labels match taxonomy

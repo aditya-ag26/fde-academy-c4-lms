@@ -66,9 +66,7 @@ A broken document is an [issue](../../issues/new/choose), not a discussion.
      .config/batch.yaml. Hand edits inside these markers are overwritten.
      To change what appears here, change the source frontmatter. -->
 
-> **Not configured yet.** Once [`.config/batch.yaml`](.config/batch.yaml) holds real
-> dates, this section shows the current session, what is due, and the latest notices —
-> regenerated daily and on every merge, because a stale dashboard is worse than none.
+> **Not configured yet.** Once [`.config/batch.yaml`](.config/batch.yaml) holds real dates, this section shows the current session, what is due, and the latest notices — regenerated daily and on every merge, because a stale dashboard is worse than none.
 
 <!-- DASHBOARD:END -->
 
