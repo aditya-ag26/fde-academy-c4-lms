@@ -1,0 +1,134 @@
+# Interview bank — structured data, not prose.
+#
+# WHY YAML: this gets filtered by topic and difficulty, rendered into the by-topic/
+# views, and tested in CI (every question has a non-empty answer; every source_session
+# exists). A prose question bank cannot be checked, and so it rots.
+#
+# `source_session` is the field that makes this a teaching artefact rather than a quiz.
+# It tells a student WHERE TO GO AND LEARN THIS, not merely that they got it wrong.
+# It is required for that reason.
+#
+# EXAMPLE ENTRIES. These demonstrate the full schema and are tied to the example
+# session S01. Replace them with real content.
+
+version: 1
+
+questions:
+
+  - id: IQ-001
+    topic: retrieval
+    track: ai-engineering
+    difficulty: easy
+    question: >
+      Why does a keyword search miss a document that clearly answers the user's
+      question?
+    answer: >
+      Because a keyword index matches words, and the person asking usually does not
+      know the words the answer is written in — if they did, they would often not need
+      to search. There are three shapes to this. Different words for the same meaning
+      (car / vehicle). The same words for different meanings (a Python dependency
+      question returning a herpetology paper). And the hardest one: the query describes
+      a symptom while the document describes a cause, as in "users keep getting logged
+      out" against "token lifetime is 900 seconds". The third has no word to swap, so
+      synonym lists cannot reach it.
+    follow_ups:
+      - "Which of the three can a synonym list fix, and which can it not?"
+      - "Give an example of the symptom-vs-cause shape from a system you have worked on."
+    source_session: S01
+    tags: [keyword-search, failure-modes]
+
+  - id: IQ-002
+    topic: retrieval
+    track: ai-engineering
+    difficulty: medium
+    question: >
+      A retrieved document has a cosine similarity of 0.91 to the query. What does that
+      tell you, and what does it not?
+    answer: >
+      It tells you the document is about approximately the same subject as the query —
+      the two vectors point in nearly the same direction. It does not tell you the
+      document answers the query. Similarity measures aboutness, not answerhood, and
+      the two come apart precisely where it matters: a question and a rephrasing of
+      that question score close to 1.0 and are useless to each other. In practice a
+      document titled "Common token expiry errors" will outscore "Set token_lifetime in
+      auth.yaml" for the query "how do I fix the token expiry error", because the first
+      is nearly a restatement of the question while the second is the answer. The score
+      looks like a confidence value and is not one; it is an angle. Closing the gap
+      between aboutness and answerhood is what reranking is for.
+    follow_ups:
+      - "Why is a question and its own restatement the worst case for this?"
+      - "How would you detect this failure mode in an evaluation set?"
+    source_session: S01
+    tags: [similarity, evaluation, reranking]
+
+  - id: IQ-003
+    topic: retrieval
+    track: ai-engineering
+    difficulty: medium
+    question: >
+      Why is cosine similarity usually preferred over Euclidean distance for comparing
+      text embeddings?
+    answer: >
+      Cosine measures the angle between two vectors and ignores their magnitude.
+      Document length tends to inflate vector magnitude, so a long document and a short
+      one about the same subject still point in the same direction even though one
+      vector is considerably longer. Euclidean distance would penalise the long
+      document for being long, which is not a property anyone wants to rank on. Note
+      that on L2-normalised vectors the two are monotonically related and the choice
+      stops mattering — which is why many vector stores normalise at index time and
+      then use dot product.
+    follow_ups:
+      - "When would you actually want magnitude to matter?"
+      - "What happens to cosine similarity if one vector is all zeros?"
+    source_session: S01
+    tags: [similarity, vectors]
+
+  - id: IQ-004
+    topic: retrieval
+    track: ai-engineering
+    difficulty: hard
+    question: >
+      Your retrieval system returns five results that are all near-identical. Ranking
+      looks correct and the reranker is working. What is going on, and how would you
+      confirm it?
+    answer: >
+      Most likely the index contains near-duplicate documents, and retrieval is
+      faithfully reporting that. Similarity has no concept of "enough" — it does not
+      know it has already returned this content. Every one of those five can be a
+      legitimate near neighbour while the result set is still useless. Common causes are
+      boilerplate repeated across many pages that survives into chunks, overlapping
+      chunk windows manufacturing near-copies, and the same source document ingested
+      more than once. Confirm it by looking at the index rather than the output: print
+      twenty random chunks and read them, and count exact-duplicate content hashes. The
+      giveaway is that nothing is broken — a correctly functioning retriever over a
+      corpus that is wrong. Fixes are at index time, not query time: strip repeated
+      boilerplate before chunking, chunk on structure rather than a fixed window, and
+      deduplicate by content hash. Reranking will not help, because those chunks
+      genuinely are relevant; MMR treats the symptom in the result set while the index
+      stays full of noise.
+    follow_ups:
+      - "Why can a cross-encoder reranker not fix this?"
+      - "What does MMR do here, and why is it not sufficient on its own?"
+      - "How would you tell this apart from a genuine ranking failure?"
+    source_session: S01
+    tags: [chunking, deduplication, debugging]
+
+  - id: IQ-005
+    topic: retrieval
+    track: ai-engineering
+    difficulty: easy
+    question: >
+      What do the individual dimensions of a text embedding represent?
+    answer: >
+      Nothing nameable. They are learned during training, not designed, and no single
+      dimension corresponds to a concept a person would recognise — there is no
+      "authentication dimension" to go looking for. What carries meaning is the
+      geometry: the relative positions of points, so that texts about similar things
+      land near each other. Teaching examples that label axes with readable names are
+      useful scaffolding for doing the arithmetic by hand, and should be discarded
+      afterwards. Expecting interpretable dimensions is a common and costly wrong turn.
+    follow_ups:
+      - "If dimensions are not interpretable, how would you debug a bad embedding?"
+      - "What would it take for a dimension to be interpretable?"
+    source_session: S01
+    tags: [embeddings, intuition]
