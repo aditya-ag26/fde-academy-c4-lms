@@ -2,7 +2,7 @@
 
 Where this is, honestly. For reviewers, and for whoever picks it up next.
 
-**Last updated:** 2026-09-13 · **Phases complete:** 4 of 8
+**Last updated:** 2026-09-13 · **Phases complete:** 6 of 8
 
 ---
 
@@ -41,9 +41,9 @@ which is why nothing else hardcodes the repo name.
 | 2 | Templates and a worked example | ✅ | 8 templates, one complete session, 2 activities + rubric, case study, notice, question bank |
 | 3 | Discussions surface | ✅ | 12 categories defined, 41 labels on four axes, 7 forms, bot library, 9 workflows, 4 delivery docs, 5 seeded threads |
 | 4 | Platform tooling | ✅ | `manifest`, `validate`, `dashboard` — real, 65 tests, running in CI |
-| 5 | Workflows | 🟡 | 9 files; CI is fully real, the Discussions/publish ones still log |
-| 6 | Automation scaffolding | ⬜ | Drive → LLM → approval → repo pipeline |
-| 7 | Entry points | 🟡 | START-HERE done; orientation docs pending |
+| 5 | Workflows | ✅ | 11 files. CI, dashboard, notebooks and housekeeping real; Discussions/publish ones stubbed pending the bot |
+| 6 | Automation scaffolding | ✅ | 8 skill prompts, 3 config schemas, 5 stage specs, 2 staff docs. No implementation, per spec |
+| 7 | Entry points | 🟡 | START-HERE, first-week guide, authoring workflow done |
 | 8 | Governance layer | 🟡 | Governance docs done; glossary and style guide pending |
 
 ## What genuinely works today
@@ -65,6 +65,13 @@ which is why nothing else hardcodes the repo name.
   verified as answered, labelled across all four axes. Every one footered as
   faculty-written.
 - **41 labels applied** to the live repository via `provision.py`.
+- **Six CI jobs**, all real: validate · dashboard-fresh · workflow-security · tests ·
+  labels-in-sync · forms-valid.
+- **A workflow security audit runs on every push**, enforcing
+  [security.md](../04-operations/security.md). It caught two real violations in our own
+  bot workflow the first time it ran.
+- **9 of 12 Discussion categories** created, **zero with a wrong format** — the part
+  that cannot be fixed later.
 
 ## What is deliberately not built
 
@@ -110,7 +117,9 @@ Left to a human, not invented:
 | **Peer review assignment** — random, or by track? | Before the first assignment |
 | **Late work policy** — the bot labels overdue; what happens next is a person's call | Before the first deadline |
 | **Auto-grading** — decided against for now; human review plus the decision gate. Revisit once real submissions show which checks would pay for themselves | Reviewed after batch 1 |
-| **Drive permission model** — two shared drives, or one with convention | Phase 6 |
+| **Drive permission model** — two shared drives, or one with convention | Before the pipeline is built |
+| **Drive auth** — service account on the shared drive, or domain-wide delegation | Before the pipeline is built |
+| **Skill granularity** — one per artefact, or one pass producing several | Before the pipeline is built |
 
 ---
 
