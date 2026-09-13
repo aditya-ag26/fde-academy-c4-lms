@@ -1,0 +1,35 @@
+name: FAQ harvest
+
+# The highest-value automation in the system: an FAQ built from questions students
+# actually asked cannot invent a problem nobody had.
+#
+# THE GATE: a MARKED answer only means it satisfied the asker. A VERIFIED answer
+# means staff confirmed it is correct. Only verified answers are harvested, because
+# anything in library/ carries the repository's authority.
+
+on:
+  schedule:
+    - cron: '0 4 * * SUN'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  harvest:
+    name: Answered threads to library/faqs/
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      discussions: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect and open a PR
+        run: |
+          echo "::notice::Stub."
+          echo "1. Find threads labelled faq-candidate with a VERIFIED answer."
+          echo "2. Draft an FAQ entry with source_discussion and verified_by set."
+          echo "3. Open a PR. A human merges - generation is cheap, publication is not."
+          echo "4. Log every faq-candidate WITHOUT a verified answer. That list is the"
+          echo "   content-gap report and is worth more than the entries harvested."

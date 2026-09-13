@@ -1,0 +1,30 @@
+name: Deliver a notice
+
+# The repo is the record; Discussions is the delivery. Students get a
+# notification rather than needing to poll the repository.
+
+on:
+  push:
+    branches: [main]
+    paths: ['batch/notices/**.md']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deliver:
+    name: Post to Announcements
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write        # writes posted_to_discussions back into the file
+      discussions: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Post the notice
+        run: |
+          echo "::notice::Stub."
+          echo "Posts to Announcements (ANNOUNCEMENT format, staff-post-only), then"
+          echo "writes the thread URL into posted_to_discussions."
+          echo "Skips any notice whose expires date has passed - posting a stale"
+          echo "notice is worse than not posting it."

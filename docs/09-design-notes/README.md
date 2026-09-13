@@ -4,6 +4,7 @@ Why this is shaped the way it is. For whoever builds or inherits this next.
 
 | Document | What it is |
 |---|---|
+| **[`STATUS.md`](STATUS.md)** | **Start here.** What is built, what is stubbed, what must happen before students get access |
 | `BUILD-INSTRUCTIONS.md` | The phased build plan this repository was constructed from |
 | `LMS-STRUCTURE.md` | The structural design: what goes where and why |
 | `drive-layer-design.md` | How content reaches the repo from Drive, without git |

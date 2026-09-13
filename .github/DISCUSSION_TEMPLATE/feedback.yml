@@ -1,0 +1,47 @@
+# Feedback about the batch itself.
+#
+# The markdown block below states plainly that this is read and by whom. A feedback
+# channel nobody confirms is read gets used twice and then abandoned.
+title: ""
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Feedback on the batch
+
+        **This is read.** The batch owner reads every thread in this category, and
+        pace/difficulty feedback has changed how sessions run before.
+
+        What it is not: anonymous. Your name is on it, like anywhere else on GitHub.
+        If something needs to be said privately, message a staff member directly.
+
+  - type: dropdown
+    id: about
+    attributes:
+      label: What is this about?
+      options:
+        - "Pace — too fast, too slow"
+        - "Difficulty — activities or sessions"
+        - "Content — what is covered, what is missing"
+        - "Logistics — timing, scheduling, tooling"
+        - "The forum itself"
+        - "Something else"
+    validations:
+      required: true
+
+  - type: textarea
+    id: feedback
+    attributes:
+      label: Your feedback
+      description: "Specific beats general. 'Session 3 assumed numpy familiarity that wasn't in the prerequisites' is actionable; 'too fast' is harder to act on."
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: What would you change?
+      description: Optional, and genuinely useful when you have one.
+    validations:
+      required: false

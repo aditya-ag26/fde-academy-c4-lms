@@ -1,0 +1,104 @@
+name: CI
+
+# Required status checks on main. These are the gate between a typo in frontmatter
+# and a silently broken dashboard.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Frontmatter and structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+
+      # TODO(platform): replace with the reusable workflow once lms-platform exists:
+      #   uses: ORG/lms-platform/.github/workflows/validate.yml@v1
+      - name: Validate content
+        run: |
+          echo "::notice::Stub. Becomes lmskit.validate."
+          echo "Checks: frontmatter parses, no unknown fields, controlled values in"
+          echo "taxonomy, id formats and uniqueness, cross-references resolve, folder"
+          echo "name matches id+date, released <= due, rubric weights sum, scheduled"
+          echo "sessions have no post-session artefacts, provenance block present."
+
+  links:
+    name: Link check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check links
+        run: |
+          echo "::notice::Stub. Internal links must resolve; external ones are"
+          echo "reported but do not fail the build — a dead third-party link is not"
+          echo "a reason to block a content PR."
+
+  labels-in-sync:
+    name: Labels match taxonomy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+      - name: Every track and difficulty has a label
+        run: |
+          python - <<'PY'
+          import yaml
+          tax = yaml.safe_load(open('.config/taxonomy.yaml', encoding='utf-8'))
+          lab = yaml.safe_load(open('.config/labels.yaml', encoding='utf-8'))
+          names = {l['name'] for l in lab['labels']}
+          missing = []
+          for t in tax['tracks']:
+              if f"track:{t['id']}" not in names:
+                  missing.append(f"track:{t['id']}")
+          for d in tax['difficulty']:
+              if f"difficulty:{d}" not in names:
+                  missing.append(f"difficulty:{d}")
+          if missing:
+              raise SystemExit("labels.yaml is missing: " + ", ".join(missing))
+          print(f"OK - {len(names)} labels, taxonomy fully covered")
+          PY
+
+  forms-valid:
+    name: Discussion forms parse
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+      - name: Forms are valid and reference known labels
+        run: |
+          python - <<'PY'
+          import pathlib, yaml
+          known = {l['name'] for l in
+                   yaml.safe_load(open('.config/labels.yaml', encoding='utf-8'))['labels']}
+          bad = []
+          for f in sorted(pathlib.Path('.github/DISCUSSION_TEMPLATE').glob('*.yml')):
+              d = yaml.safe_load(f.read_text(encoding='utf-8'))
+              if 'body' not in d:
+                  bad.append(f"{f.name}: no body")
+              for lab in d.get('labels') or []:
+                  if lab not in known:
+                      bad.append(f"{f.name}: unknown label {lab}")
+          if bad:
+              raise SystemExit("\n".join(bad))
+          print("OK - all discussion forms valid")
+          PY

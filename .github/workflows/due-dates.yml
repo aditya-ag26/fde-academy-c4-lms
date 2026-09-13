@@ -1,0 +1,56 @@
+name: Deadlines and nudges
+
+# Runs daily. Three jobs, and the THIRD is the one that matters most:
+# an unanswered question is the main way a cohort stops trusting a forum.
+
+on:
+  schedule:
+    - cron: '30 3 * * *'   # 09:00 IST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  remind:
+    name: Upcoming deadlines
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      discussions: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Post reminders
+        run: |
+          echo "::notice::Stub."
+          echo "Reads deadlines.reminder_days_before from .config/batch.yaml and"
+          echo "comments on the activity thread. Never DMs; never nags twice."
+
+  mark-overdue:
+    name: Label overdue submissions
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      discussions: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply status:overdue
+        run: |
+          echo "::notice::Stub."
+          echo "After due + overdue_grace_days, label the thread. Labelling, not"
+          echo "closing - a late submission is still a submission."
+
+  unanswered:
+    name: Escalate unanswered threads
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      discussions: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Find threads with no reply
+        run: |
+          echo "::notice::Stub, and the highest-value job in this file."
+          echo "Any thread older than deadlines.unanswered_alert_hours with no"
+          echo "human reply gets status:needs-staff and appears in the daily digest."
+          echo "A forum where questions go unanswered is abandoned within a month."

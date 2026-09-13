@@ -1,0 +1,116 @@
+name: Discussions bot
+
+# The entire feedback surface for a read-only cohort. A student has no green tick,
+# no merged PR and no email — if this workflow is silent, they assume their
+# submission failed.
+#
+# SAFETY PROPERTIES, in order of how badly they fail:
+#   1. Never reacts to a bot. Without this guard a reply containing a command
+#      triggers a run that posts a reply containing a command, forever.
+#   2. Never runs untrusted code. It parses text; it does not execute anything
+#      from a thread.
+#   3. Sanitises every string before echoing it back, because this comment is
+#      posted under the organisation's identity.
+#
+# THE KILL SWITCH: set the repository variable BOT_ENABLED to "false". Every job
+# below checks it. Staff must be able to silence the bot without merging a commit.
+
+on:
+  discussion:
+    types: [created, edited]
+  discussion_comment:
+    types: [created]
+
+# Read-only by default. Each job widens only to what it needs.
+permissions:
+  contents: read
+
+concurrency:
+  # One run per thread. A student editing a post three times in a minute should get
+  # one acknowledgement, not three.
+  group: bot-${{ github.event.discussion.number }}
+  cancel-in-progress: true
+
+jobs:
+  guard:
+    name: Should this run?
+    runs-on: ubuntu-latest
+    outputs:
+      proceed: ${{ steps.check.outputs.proceed }}
+    steps:
+      - id: check
+        env:
+          ACTOR: ${{ github.event.sender.login }}
+          ACTOR_TYPE: ${{ github.event.sender.type }}
+          ENABLED: ${{ vars.BOT_ENABLED }}
+        run: |
+          if [ "${ENABLED}" = "false" ]; then
+            echo "Bot disabled via the BOT_ENABLED repository variable."
+            echo "proceed=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+
+          # THE LOOP GUARD. Checked two ways because either alone has failed before:
+          # the type field, and the [bot] suffix convention.
+          case "${ACTOR}" in
+            *"[bot]"|github-actions|dependabot)
+              echo "Actor ${ACTOR} is a bot — refusing to react."
+              echo "proceed=false" >> "$GITHUB_OUTPUT"; exit 0 ;;
+          esac
+          if [ "${ACTOR_TYPE}" = "Bot" ]; then
+            echo "Sender type is Bot — refusing to react."
+            echo "proceed=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+
+          echo "proceed=true" >> "$GITHUB_OUTPUT"
+
+  acknowledge:
+    name: Acknowledge and validate
+    needs: guard
+    if: needs.guard.outputs.proceed == 'true' && github.event_name == 'discussion'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      discussions: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # TODO(provision): replace with the published lmskit package or a reusable
+      # workflow from lms-platform once that repo exists. Vendoring is what this
+      # separation is meant to avoid — see docs/04-operations/access-control.md.
+      - name: Install lmskit
+        run: pip install pyyaml
+
+      - name: Acknowledge, validate, label
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_PATH: ${{ github.event_path }}
+        run: |
+          echo "::notice::Stub. Wire to lmskit.discussions once lms-platform exists."
+          echo "Would run: acknowledge_submission() + labels_for_thread()"
+          echo "  category : ${{ github.event.discussion.category.name }}"
+          echo "  number   : ${{ github.event.discussion.number }}"
+          echo "  author   : ${{ github.event.discussion.user.login }}"
+
+  commands:
+    name: Handle a command
+    needs: guard
+    if: needs.guard.outputs.proceed == 'true' && github.event_name == 'discussion_comment'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      discussions: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect and dispatch
+        env:
+          BODY: ${{ github.event.comment.body }}
+        run: |
+          # Commands inside a code fence are ignored — students paste examples of
+          # commands while asking how to use them, and that must not fire.
+          echo "::notice::Stub. Wire to lmskit.discussions.command_in()."
+          printf '%s' "$BODY" | head -c 200

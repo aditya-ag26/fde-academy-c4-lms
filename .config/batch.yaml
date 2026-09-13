@@ -62,10 +62,10 @@ staff:
 
 # Where students go. Rendered into START-HERE.md and the dashboard quick links.
 links:
-  discussions: "https://github.com/REPLACE-ME-org/batch-fde-c4/discussions"
-  ask_a_question: "https://github.com/REPLACE-ME-org/batch-fde-c4/discussions/new?category=q-a-general"
-  submit_work: "https://github.com/REPLACE-ME-org/batch-fde-c4/discussions/new?category=assignments"
-  help_desk: "https://github.com/REPLACE-ME-org/batch-fde-c4/discussions/new?category=help-desk"
+  discussions: "https://github.com/aditya-ag26/fde-academy-c4-lms/discussions"
+  ask_a_question: "https://github.com/aditya-ag26/fde-academy-c4-lms/discussions/new?category=q-a-general"
+  submit_work: "https://github.com/aditya-ag26/fde-academy-c4-lms/discussions/new?category=assignments"
+  help_desk: "https://github.com/aditya-ag26/fde-academy-c4-lms/discussions/new?category=help-desk"
   calendar: "batch/calendar.md"
   library: "library/README.md"
   code_of_conduct: "CODE_OF_CONDUCT.md"

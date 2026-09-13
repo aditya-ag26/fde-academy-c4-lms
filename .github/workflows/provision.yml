@@ -1,0 +1,61 @@
+name: Provision the repository
+
+# Run once when the repository is created, and again after changing .config/labels.yaml.
+#
+# WHAT THIS CAN DO: create and update labels (REST API).
+# WHAT IT CANNOT DO: create Discussion categories. There is no createDiscussionCategory
+# mutation in the GraphQL API and no REST equivalent - they are made by hand in
+# Settings. A category's FORMAT is fixed at creation and cannot be changed later
+# without deleting it, which orphans its threads.
+#
+# So this workflow applies what it can and VERIFIES what it cannot.
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: 'Actually apply changes (unchecked = dry run)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  labels:
+    name: Apply labels
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write          # labels are an issues-scope resource
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+
+      - name: Sync labels from .config/labels.yaml
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          APPLY: ${{ inputs.apply }}
+        run: |
+          echo "::notice::Stub. Creates or updates every label; reports extras."
+          echo "Dry run unless apply=true."
+
+  verify-categories:
+    name: Verify Discussion categories
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      discussions: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare live categories against the expected set
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "::notice::Stub."
+          echo "Queries repository.discussionCategories and compares name + isAnswerable"
+          echo "against .config/discussion-categories.yaml. Reports what is missing or"
+          echo "has the wrong format. Cannot fix either - categories are manual."

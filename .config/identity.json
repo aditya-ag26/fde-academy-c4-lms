@@ -1,9 +1,9 @@
 {
-  "$comment": "Repo identity. Nothing else in this repository hardcodes owner/repo/slug. Every script and workflow reads this file. PLACEHOLDER VALUES — replace before first provision.",
+  "$comment": "Repo identity. Nothing else in this repository hardcodes owner/repo/slug. Every script and workflow reads this file. CURRENTLY POINTING AT THE PERSONAL STAGING REPO - update `owner` and `repos` when this moves to the organisation.",
   "display_name": "FDE Academy C4 LMS",
-  "owner": "REPLACE-ME-org",
+  "owner": "aditya-ag26",
   "repos": {
-    "content": "REPLACE-ME-org/batch-fde-c4",
+    "content": "aditya-ag26/fde-academy-c4-lms",
     "platform": "REPLACE-ME-org/lms-platform",
     "private": "REPLACE-ME-org/lms-private"
   },
@@ -14,5 +14,9 @@
     "app_slug": "REPLACE-ME-lms-bot",
     "committer_name": "lms-bot",
     "committer_email": "lms-bot@users.noreply.github.com"
+  },
+  "staging": {
+    "is_staging": true,
+    "note": "This is a personal staging repository for internal review. Before students are granted access: move to the org, extract _staging-* folders to their own repos, set visibility to private, and update owner/repos above."
   }
 }

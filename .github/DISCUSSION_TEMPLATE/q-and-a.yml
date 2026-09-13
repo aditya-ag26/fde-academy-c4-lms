@@ -1,0 +1,37 @@
+# General question, not tied to one session.
+title: ""
+labels: ["type:question", "status:needs-answer"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Ask a general question
+
+        Not about one specific session? Right place.
+        About a specific session? Use **Doubts — Session** instead, so it is findable
+        by the people who were in that session.
+
+  - type: input
+    id: topic
+    attributes:
+      label: Topic
+      description: "A word or two, so this is findable later. Retrieval, chunking, evaluation…"
+      placeholder: retrieval
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: "Ask the specific version of it. A narrow question gets a useful answer; a broad one gets a link."
+    validations:
+      required: true
+
+  - type: textarea
+    id: checked
+    attributes:
+      label: What have you already checked?
+      description: "Library, session notes, a search. Saves someone sending you where you have been."
+    validations:
+      required: true

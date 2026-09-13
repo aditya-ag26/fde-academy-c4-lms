@@ -1,0 +1,55 @@
+name: Publish an activity to Discussions
+
+# THE DUAL-HOME RULE, enforced in code:
+#   the repo file is canonical; the Discussion thread is a published copy.
+#
+# This workflow is the only thing permitted to write an activity thread's body.
+# A correction is a PR to the file, which re-runs this and re-syncs the thread.
+# Never edit the brief text in the thread - two divergent versions and students
+# trust neither.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'activities/briefs/**.md'
+      - 'library/coding-questions/**.md'
+  workflow_dispatch:
+    inputs:
+      activity_id:
+        description: 'Activity or question id (e.g. A01, CQ-007)'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Create or re-sync the thread
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write        # writes discussion_url back into the file
+      discussions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+
+      - name: Publish or re-sync
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "::notice::Stub."
+          echo "1. Read the brief's frontmatter."
+          echo "2. If discussion_url is null -> createDiscussion, then write the"
+          echo "   URL back into the file and commit."
+          echo "3. If set -> updateDiscussion with the body rebuilt from the file,"
+          echo "   and comment saying what changed."
+          echo "4. Thread body always starts with a generated header: canonical file"
+          echo "   link, due date, rubric link, activity id."
+          echo ""
+          echo "NOTE: createDiscussion needs a categoryId. Query"
+          echo "repository.discussionCategories - categories cannot be created by"
+          echo "API and are made by hand. See docs/04-operations/provisioning.md."

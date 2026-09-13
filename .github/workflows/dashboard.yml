@@ -1,0 +1,43 @@
+name: Regenerate the dashboard
+
+# A stale dashboard is worse than none, so nothing here requires a human to
+# remember to update it. Everything is derived from frontmatter.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'batch/**'
+      - 'activities/**'
+      - '.config/batch.yaml'
+  schedule:
+    - cron: '0 2 * * *'     # daily, so "this week" rolls over on its own
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    name: README, calendar, indexes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+
+      - name: Regenerate
+        run: |
+          echo "::notice::Stub. Becomes lmskit.dashboard."
+          echo "Rewrites ONLY between the DASHBOARD:START/END markers in README.md,"
+          echo "plus batch/calendar.md, batch/sessions/README.md and"
+          echo "activities/catalogue.md."
+
+      - name: Commit if changed
+        run: |
+          echo "::notice::Commits only on a real diff - an empty commit every night"
+          echo "makes the history useless for spotting actual content changes."

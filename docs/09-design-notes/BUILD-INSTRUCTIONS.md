@@ -651,6 +651,26 @@ into `docs/02-delivery/discussions-guide.md` and the activity brief template.
 
 ### Categories — the "what kind of post" axis
 
+> **VERIFIED CONSTRAINT — September 2026.** There is **no `createDiscussionCategory`
+> mutation** in the GitHub GraphQL API, and no REST equivalent. Categories must be
+> created **by hand** in Settings → Discussions.
+>
+> This matters more than it sounds, because **a category's format is fixed at creation**
+> — an `ANSWER` category cannot be converted to `DISCUSSION` later, or the reverse,
+> without deleting and recreating it (which orphans its threads). Get the format right
+> the first time.
+>
+> What *is* automatable: querying existing categories (`repository.discussionCategories`
+> returns `id`, `name`, `isAnswerable`), applying labels, creating threads, commenting,
+> and marking answers.
+>
+> Consequence for `provision.py`: it applies labels via the API, then **verifies** the
+> manually-created categories against the expected set and reports what is missing or
+> has the wrong format. Anything it cannot create, it checks.
+>
+> Source: [Using the GraphQL API for Discussions](https://docs.github.com/en/graphql/guides/using-the-graphql-api-for-discussions)
+
+
 Create these. Format matters: `ANSWER` (answerable Q&A) enables marking a best answer;
 `ANNOUNCEMENT` restricts posting to staff.
 

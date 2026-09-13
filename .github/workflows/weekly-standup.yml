@@ -1,0 +1,31 @@
+name: Weekly standup
+
+# How a read-only cohort gets a heartbeat without a human writing it every Monday.
+# The bot posts THREADS here, not just replies.
+
+on:
+  schedule:
+    - cron: '30 3 * * MON'   # Monday 09:00 IST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  standup:
+    name: Post the week's thread
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      discussions: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compose and post
+        run: |
+          echo "::notice::Stub."
+          echo "Posts one announcement thread per week containing:"
+          echo "  - this week's session, date and pre-read"
+          echo "  - what is due, soonest first"
+          echo "  - what changed in the repo since last week"
+          echo "  - unanswered threads that could use a peer answer"
+          echo "  - last week's most helpful answerers (GitHub surfaces this natively)"
