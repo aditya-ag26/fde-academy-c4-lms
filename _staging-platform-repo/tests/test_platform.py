@@ -401,3 +401,22 @@ def test_form_with_unknown_label_is_caught(repo):
     p.write_text(p.read_text(encoding="utf-8").replace("labels: []",
                  'labels: ["type:invented"]'), encoding="utf-8")
     assert any("unknown label" in m for m in _messages(repo))
+
+
+def test_example_link_in_code_span_is_not_checked(repo):
+    """Style guides and templates legitimately show paths that do not exist.
+
+    A link inside a code span is an EXAMPLE, not a link.
+    """
+    p = repo / "library/README.md"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text("# lib\n\nWrite `[the rubric](../rubrics/A01-slug.md)` like this.\n",
+                 encoding="utf-8")
+    assert not any("broken relative link" in m for m in _messages(repo))
+
+
+def test_real_broken_link_still_caught(repo):
+    p = repo / "library/README.md"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text("# lib\n\n[gone](does-not-exist.md)\n", encoding="utf-8")
+    assert any("broken relative link" in m for m in _messages(repo))

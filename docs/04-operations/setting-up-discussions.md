@@ -78,7 +78,9 @@ category drift and applies labels, and that is the extent of what is automatable
 | **Pin a discussion** | Open it → right sidebar → **Pin discussion**. Maintainers only, max 4. There is no `pinDiscussion` mutation; `pinIssue` exists, discussions have no equivalent |
 | **Reorder the sidebar** | Drag on the categories page |
 
-**Worth pinning:** the welcome thread, and the current week's standup once it exists.
+**Pinning is optional.** The welcome thread is linked from the README and START-HERE,
+which is how people actually reach it — a pin is a convenience, not a route. If the
+option is not visible, it may be limited to organisation-owned repositories; skip it.
 
 **The default category is a nicety, not a blocker.** Students using the forms land in
 the right category regardless, and the "Where do I go" table in the README covers the

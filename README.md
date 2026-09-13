@@ -85,6 +85,7 @@ Worth opening while the cohort content is still placeholder:
 
 | | |
 |:--|:--|
+| 📖 [Glossary](docs/00-orientation/glossary.md) | Every term, including the ones nobody stops to explain |
 | 🧪 [A complete session](batch/sessions/S01-2026-01-15-example-session/) | Pre-read, notes, transcript, post-read — the shape everything follows |
 | 📝 [An assignment and its rubric](activities/briefs/A01-keyword-baseline.md) | Published together. The rubric is not a secret |
 | 🔍 [A case study](library/case-studies/CS-01-index-was-fine.md) | A team spends three weeks fixing the wrong thing |
@@ -101,6 +102,9 @@ Worth opening while the cohort content is still placeholder:
 | [Discussions — faculty](docs/02-delivery/discussions-for-faculty.md) | Triage routine, escalation, moderation, what the bot does for you |
 | [Authoring workflow](docs/05-contributing/authoring-workflow.md) | Adding a session, activity or notice — and what CI checks |
 | [Frontmatter schema](docs/01-authoring/frontmatter.md) | The contract CI validates against |
+| [Style guide](docs/01-authoring/style-guide.md) | Voice and formatting. The skill prompts point here |
+| [Review guide](docs/02-delivery/review-guide.md) | How to give useful review, with worked examples |
+| [Archiving a batch](docs/04-operations/archiving-a-batch.md) | What happens at the end. Decide before it is urgent |
 | [Access control](docs/04-operations/access-control.md) | Who sees what, and why solutions are pushed late |
 | [Bot policy](docs/02-delivery/bot-policy.md) | What it does, and what it refuses to do |
 | [Build status](docs/09-design-notes/STATUS.md) | What works, what is stubbed, what is undecided |

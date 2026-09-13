@@ -421,6 +421,10 @@ class Validator:
                     "_staging-platform-repo")):
                 continue
             text = p.read_text(encoding="utf-8", errors="replace")
+            # A link inside a code span or fence is an EXAMPLE, not a link - style
+            # guides and templates legitimately show paths that do not exist.
+            text = re.sub(r"```.*?```", "", text, flags=re.S)
+            text = re.sub(r"`[^`\n]*`", "", text)
             for m in LINK_RE.finditer(text):
                 target = m.group(1).strip()
                 # ../../ escapes the repo in GitHub's UI (owner/repo shorthand)
