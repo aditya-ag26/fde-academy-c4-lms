@@ -1,0 +1,55 @@
+# Form for the "Coding Questions" category (slug: coding-questions).
+# "Setup / installation" is turned into the setup-issue label by
+# .github/workflows/discussions-triage.yml.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Coding Questions is for errors, bugs and technical problems.**
+        Paste the error as text (in a code block), and attach a screenshot if it helps.
+
+        ⚠️ Never paste passwords, API keys, tokens or `.env` files. Replace them with `***`.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of problem is it?
+      options:
+        - Error or bug in my code
+        - Setup / installation (tools, environment, packages)
+        - My code runs but gives the wrong output
+        - Other technical question
+    validations:
+      required: true
+  - type: input
+    id: context
+    attributes:
+      label: Where are you working?
+      description: Assignment or session, language and tool.
+      placeholder: "e.g. Assignment 4, Python 3.12, VS Code on Windows"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What are you trying to do, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Full error message
+      description: Copy-paste the full error text. It is formatted as code automatically.
+      render: shell
+  - type: textarea
+    id: code
+    attributes:
+      label: Relevant code
+      description: Only the part that matters (not the whole project). Formatted as code automatically.
+      render: python
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you already tried?
+      description: Searches, fixes attempted, links you followed. You can drag screenshots into this box.
+    validations:
+      required: true

@@ -1,0 +1,9 @@
+# name|color|description   (read by setup-discussions.sh — one label per line)
+assignment-doubt|1d76db|Doubt about an assignment
+session-doubt|0e8a16|Doubt about a live session or recording
+setup-issue|5319e7|Installing tools or setting up the environment
+access-issue|d93f0b|Can't access the LMS, repo, recordings or links
+course-policy|c5def5|Deadlines, attendance, grading, certificates
+needs-info|fbca04|Mentor needs more details from the author
+duplicate|cfd3d7|Already asked – see the linked discussion
+faq|b60205|Good answer, worth keeping for future cohorts

@@ -1,0 +1,44 @@
+# Form for the "Q&A" category (slug: q-a).
+# The "What is this about?" answer is turned into a label by
+# .github/workflows/discussions-triage.yml, because students cannot add labels themselves.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Q&A is for doubts about assignments and live sessions.**
+        Got an error message or broken code? Post in **Coding Questions** instead.
+        A question about access, deadlines or course rules? Post in **Help Desk**.
+
+        Before posting, search Discussions — your doubt may already be answered.
+  - type: dropdown
+    id: topic
+    attributes:
+      label: What is this about?
+      options:
+        - An assignment
+        - A live session or recording
+        - Something else from the course
+    validations:
+      required: true
+  - type: input
+    id: reference
+    attributes:
+      label: Which assignment or session?
+      description: Name or number, so mentors can find the context quickly.
+      placeholder: "e.g. Assignment 3 – REST APIs, or Session 12 – SQL joins"
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: Be specific. Quote the part of the assignment or slide you are stuck on.
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you understood or tried so far?
+      description: Even a partial idea helps us answer faster.
+    validations:
+      required: true
