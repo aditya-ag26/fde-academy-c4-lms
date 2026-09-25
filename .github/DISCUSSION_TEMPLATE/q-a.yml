@@ -7,7 +7,7 @@ body:
       value: |
         **Q&A is for doubts about assignments and live sessions.**
         Got an error message or broken code? Post in **Coding Questions** instead.
-        A question about access, deadlines or course rules? Post in **HelpDesk**.
+        A question about access, deadlines or course rules? Post in **Help Desk**.
 
         Before posting, search Discussions — your doubt may already be answered.
   - type: dropdown

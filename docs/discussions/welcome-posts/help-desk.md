@@ -1,7 +1,7 @@
-# 🛟 How to use HelpDesk
+# 🛠️ How to use Help Desk
 
 **For:** 🔑 access · 📋 deadlines, attendance, grading, certificates · 🗓️ schedule
-**Not for:** 🙏 doubts → Q&A · 🐞 errors → Coding Questions
+**Not for:** 🙏 doubts → Q&A · 💻 errors → Coding Questions
 
 ![]({{IMG}}/02-choose-category.png)
 

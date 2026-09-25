@@ -1,7 +1,7 @@
 # 🙏 How to use Q&A
 
 **For:** ✅ assignment doubts ✅ session doubts
-**Not for:** 🐞 errors → Coding Questions · 🛟 admin → HelpDesk
+**Not for:** 💻 errors → Coding Questions · 🛠️ admin → Help Desk
 
 ![]({{IMG}}/05-labels-and-filters.png)
 

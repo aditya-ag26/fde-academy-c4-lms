@@ -9,8 +9,9 @@
 | 📣 | Announcements | Mentors |
 | 📝 | Assignments | Mentors (you **comment** to submit) |
 | 🙏 | Q&A | Everyone |
-| 🐞 | Coding Questions | Everyone |
-| 🛟 | HelpDesk | Everyone |
+| 💻 | Coding Questions | Everyone |
+| 🛠️ | Help Desk | Everyone |
+| 📊 | Feedback | Everyone |
 | 🗳️ | Polls | Mentors (you vote) |
 
 ## 2. Find your way around

@@ -4,7 +4,7 @@ Use this to set up Discussions in any course repository. It takes about 15 minut
 Everything in this folder plus these files is the whole kit — copy them to the new repo first:
 
 ```
-.github/DISCUSSION_TEMPLATE/     forms for Q&A, Coding Questions, HelpDesk, Assignments
+.github/DISCUSSION_TEMPLATE/     forms for Q&A, Coding Questions, Help Desk, Feedback, Assignments
 .github/workflows/discussions-triage.yml   turns form answers into labels, keeps Polls mentor-only
 docs/discussions/                this guide, welcome posts, labels, setup script, screenshots
 ```
@@ -27,7 +27,7 @@ what stops students from deleting other people's posts and from posting in Annou
 
 | Action | Student (**Read**) | Mentor (**Maintain**) |
 |---|---|---|
-| Start a discussion in Q&A, Coding Questions, HelpDesk | ✅ | ✅ |
+| Start a discussion in Q&A, Coding Questions, Help Desk, Feedback | ✅ | ✅ |
 | Start a discussion in **Announcements / Assignments** (Announcement format) | ❌ blocked by GitHub | ✅ |
 | Start a poll in **Polls** | ⚠️ GitHub allows it — `discussions-triage.yml` closes and locks it automatically | ✅ |
 | Comment, reply, react, upvote | ✅ (not on locked discussions) | ✅ |
@@ -57,7 +57,8 @@ for the people who own the repository.
 
 ## 1. Categories
 
-*Discussions tab → ✏️ next to "Categories"*. Delete **General**, **Ideas** and **Show and tell**
+*Discussions tab → ✏️ next to "Categories"*. Delete **General**, **Ideas** and **Show and tell**,
+plus any old discussions left in the repo (open each one → sidebar → **Delete discussion**)
 (🗑️ icon). Edit the defaults you keep and create the rest so you end up with exactly this:
 
 | Emoji | Name (exact) | Format | Slug (must match) | Description |
@@ -65,12 +66,17 @@ for the people who own the repository.
 | 📣 | Announcements | **Announcement** | `announcements` | Official course updates. Only mentors can post. |
 | 📝 | Assignments | **Announcement** | `assignments` | Assignments are posted here. Submit by commenting on the assignment. |
 | 🙏 | Q&A | **Question / Answer** | `q-a` | Doubts about assignments and live sessions. |
-| 🐞 | Coding Questions | **Question / Answer** | `coding-questions` | Errors, bugs, setup and installation problems. |
-| 🛟 | HelpDesk | **Question / Answer** | `helpdesk` | Access, deadlines, attendance, certificates and course policies. |
+| 💻 | Coding Questions | **Question / Answer** | `coding-questions` | Errors, bugs, setup and installation problems. |
+| 🛠️ | Help Desk | **Question / Answer** | `help-desk` | Access, deadlines, attendance, certificates and course policies. |
+| 📊 | Feedback | **Open-ended discussion** | `feedback` | Pace, difficulty, content, sessions. Every post is read. |
 | 🗳️ | Polls | **Poll** | `polls` | Mentors ask for your input on schedules and more. Please vote! |
 
+⚠️ **Assignments must use the Announcement format** (a 🔒 lock appears next to its name). With
+Question / Answer format, students can start their own threads there.
+
 **Check the slugs.** Click each category and look at the URL: `…/discussions/categories/<slug>`.
-The forms in `.github/DISCUSSION_TEMPLATE/` and the triage workflow match categories by slug.
+The forms in `.github/DISCUSSION_TEMPLATE/` match categories by slug. The triage workflow matches by
+name.
 Renaming an existing category may keep its old slug. If a slug doesn't match, delete that category and
 create it again with the right name.
 
@@ -99,8 +105,8 @@ applies the matching label. Mentors add the last three labels by hand.
 | `assignment-doubt` | Q&A form → "An assignment" | Doubt about an assignment |
 | `session-doubt` | Q&A form → "A live session or recording" | Doubt about a session |
 | `setup-issue` | Coding Questions form → "Setup / installation" | Tools and environment problems |
-| `access-issue` | HelpDesk form → "Access" | Can't open the LMS, repo, recordings or links |
-| `course-policy` | HelpDesk form → "Course policy" | Deadlines, attendance, grading, certificates |
+| `access-issue` | Help Desk form → "Access" | Can't open the LMS, repo, recordings or links |
+| `course-policy` | Help Desk form → "Course policy" | Deadlines, attendance, grading, certificates |
 | `needs-info` | Mentor | Waiting on the author for details |
 | `duplicate` | Mentor | Link the original, then close as duplicate |
 | `faq` | Mentor | Good Q&A to reuse with future cohorts |

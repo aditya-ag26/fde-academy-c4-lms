@@ -35,6 +35,11 @@ CATS="$(gh api graphql -f query='query($o:String!,$n:String!){repository(owner:$
 echo "$CATS" | sed 's/^/    /'
 
 missing=0
+for form in "$HERE"/../../.github/DISCUSSION_TEMPLATE/*.yml; do
+  slug="$(basename "$form" .yml)"
+  echo "$CATS" | awk -F'|' -v s="$slug" '$1==s{f=1} END{exit !f}' \
+    || { echo "!!  Form $slug.yml matches no category slug — rename the file to the slug listed above."; missing=1; }
+done
 for f in "$HERE"/welcome-posts/*.md; do
   slug="$(basename "$f" .md)"
   cat_id="$(echo "$CATS" | awk -F'|' -v s="$slug" '$1==s{print $2}')"

@@ -1,4 +1,4 @@
-# 🐞 How to ask a Coding Question
+# 💻 How to ask a Coding Question
 
 ![]({{IMG}}/03-new-discussion-form.png)
 

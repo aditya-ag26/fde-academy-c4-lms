@@ -2,7 +2,7 @@ name: Discussions triage
 
 # Two jobs that GitHub cannot do on its own:
 #   1. Students (read access) cannot add labels, so the dropdown they pick in the
-#      Q&A / Coding Questions / HelpDesk form is turned into a label here.
+#      Q&A / Coding Questions / Help Desk form is turned into a label here.
 #   2. Anyone can start a poll in a Poll-format category. Polls are for mentors
 #      only, so a poll started by anyone below Maintain is commented on, closed
 #      and locked.
@@ -25,11 +25,12 @@ jobs:
         with:
           script: |
             const d = context.payload.discussion;
-            const slug = d.category.slug;
+            // Matched by category name (not slug) so a renamed category keeps working.
+            const category = d.category.name.trim().toLowerCase();
             const { owner, repo } = context.repo;
 
             // 1. Polls: mentors only.
-            if (slug === 'polls') {
+            if (category === 'polls') {
               const { data } = await github.rest.repos.getCollaboratorPermissionLevel({
                 owner, repo, username: d.user.login,
               }).catch(() => ({ data: {} }));
@@ -42,27 +43,27 @@ jobs:
               }`, {
                 id: d.node_id,
                 body: `Hi @${d.user.login} 👋 Only mentors create polls, so this one has been closed. ` +
-                      `You can vote on mentor polls here, and ask questions in **Q&A**, **Coding Questions** or **HelpDesk**.`,
+                      `You can vote on mentor polls here, and ask questions in **Q&A**, **Coding Questions** or **Help Desk**.`,
               });
               return;
             }
 
             // 2. Form answer -> label. Keys are "### Question" headings in the form body.
             const rules = {
-              'q-a': ['What is this about?', {
+              'q&a': ['What is this about?', {
                 'An assignment': 'assignment-doubt',
                 'A live session or recording': 'session-doubt',
               }],
-              'coding-questions': ['What kind of problem is it?', {
+              'coding questions': ['What kind of problem is it?', {
                 'Setup / installation (tools, environment, packages)': 'setup-issue',
               }],
-              'helpdesk': ['What do you need help with?', {
+              'help desk': ['What do you need help with?', {
                 'Access (LMS, repository, recordings, links)': 'access-issue',
                 'Course policy (deadlines, attendance, grading, certificates)': 'course-policy',
               }],
             };
-            if (!rules[slug]) return;
-            const [heading, map] = rules[slug];
+            if (!rules[category]) return;
+            const [heading, map] = rules[category];
             const esc = heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const m = (d.body || '').match(new RegExp(`###\\s*${esc}\\s*\\n+([^\\n]+)`));
             const name = m && map[m[1].trim()];

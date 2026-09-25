@@ -1,0 +1,31 @@
+# Form for the "Feedback" category (slug: feedback). Open-ended format.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Feedback about the course: pace, difficulty, content, sessions.** Every post is read.
+        Public and under your name. Be specific and respectful.
+  - type: dropdown
+    id: area
+    attributes:
+      label: About
+      options:
+        - Pace
+        - Difficulty
+        - Content / topics
+        - Live sessions / mentors
+        - Assignments
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: working
+    attributes:
+      label: 👍 What's working
+  - type: textarea
+    id: improve
+    attributes:
+      label: 🔧 What should change
+      description: One concrete suggestion beats a general complaint.
+    validations:
+      required: true

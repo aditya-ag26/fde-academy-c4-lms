@@ -1,11 +1,11 @@
-# Form for the "HelpDesk" category (slug: helpdesk).
+# Form for the "Help Desk" category (slug: help-desk).
 # The "What do you need help with?" answer is turned into a label by
 # .github/workflows/discussions-triage.yml.
 body:
   - type: markdown
     attributes:
       value: |
-        **HelpDesk is for questions about the course itself** — access, schedules,
+        **Help Desk is for questions about the course itself** — access, schedules,
         deadlines, attendance, certificates and policies.
 
         ⚠️ This is public. Do **not** share phone numbers, email addresses, payment
