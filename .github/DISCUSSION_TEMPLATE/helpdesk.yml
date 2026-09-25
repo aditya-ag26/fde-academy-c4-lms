@@ -1,0 +1,29 @@
+# Form for the "HelpDesk" category (slug: helpdesk).
+# The "What do you need help with?" answer is turned into a label by
+# .github/workflows/discussions-triage.yml.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **HelpDesk is for questions about the course itself** — access, schedules,
+        deadlines, attendance, certificates and policies.
+
+        ⚠️ This is public. Do **not** share phone numbers, email addresses, payment
+        details or other personal information here.
+  - type: dropdown
+    id: area
+    attributes:
+      label: What do you need help with?
+      options:
+        - Access (LMS, repository, recordings, links)
+        - Course policy (deadlines, attendance, grading, certificates)
+        - Schedule or something else
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: Include dates, links or screenshots that help us understand the issue.
+    validations:
+      required: true

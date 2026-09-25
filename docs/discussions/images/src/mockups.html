@@ -1,0 +1,283 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#e6e8eb;font-family:"Liberation Sans","DejaVu Sans",Arial,"Noto Color Emoji",sans-serif;color:#1f2328;font-size:14px}
+.shot{width:1280px;background:#fff;position:relative;margin:0 0 40px;overflow:hidden}
+.top{background:#f6f8fa;border-bottom:1px solid #d1d9e0;padding:14px 24px 0}
+.repo{font-size:18px;margin-bottom:14px}.repo b{font-weight:600}.repo .lock{color:#59636e;font-size:14px}
+.tabs{display:flex;gap:22px}.tab{padding:8px 4px 10px;color:#59636e}.tab.on{color:#1f2328;font-weight:600;border-bottom:2px solid #fd8c73}
+.wrap{padding:24px 40px 36px}
+.row{display:flex;gap:10px;align-items:center}
+.search{flex:1;border:1px solid #d1d9e0;border-radius:6px;padding:8px 12px;color:#59636e;background:#f6f8fa}
+.search b{color:#1f2328;font-weight:400}
+.btn{border:1px solid #d1d9e0;border-radius:6px;padding:7px 12px;background:#f6f8fa;font-weight:600;white-space:nowrap}
+.btn.green{background:#1f883d;color:#fff;border-color:#1a7f37}
+.cols{display:flex;gap:32px;margin-top:24px}
+.side{width:280px;flex:none}.main{flex:1}
+h3{font-size:16px;margin:0 0 12px}
+.cat{padding:8px 10px;border-radius:6px;display:flex;gap:10px;align-items:center}.cat.on{background:#eff2f5;font-weight:600;box-shadow:inset 3px 0 0 #0969da}
+.pins{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.pin{border:1px solid #d1d9e0;border-radius:8px;padding:14px;background:linear-gradient(135deg,#ddf4ff,#fff 70%)}
+.pin small{color:#59636e}
+.list{border:1px solid #d1d9e0;border-radius:8px}
+.item{display:flex;gap:14px;padding:12px 16px;border-top:1px solid #d1d9e0;align-items:flex-start}.item:first-child{border-top:0}
+.emo{width:34px;height:34px;border-radius:8px;background:#f6f8fa;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
+.t{font-weight:600;font-size:15px}.meta{color:#59636e;font-size:12px;margin-top:4px}
+.lab{display:inline-block;border-radius:2em;padding:1px 8px;font-size:12px;font-weight:600;margin-left:6px;border:1px solid transparent}
+.ans{color:#1a7f37;font-size:12px;font-weight:600}
+.right{margin-left:auto;color:#59636e;font-size:12px;white-space:nowrap}
+.hl{outline:3px solid #cf222e;outline-offset:3px;border-radius:6px}
+.badge{position:absolute;width:28px;height:28px;border-radius:50%;background:#cf222e;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 2px 6px rgba(0,0,0,.3);z-index:5}
+.note{position:absolute;background:#fff8c5;border:2px solid #cf222e;border-radius:8px;padding:8px 12px;font-size:13px;line-height:1.35;max-width:270px;box-shadow:0 4px 12px rgba(0,0,0,.18);z-index:5}
+.note b{color:#cf222e}
+.illus{position:absolute;right:14px;bottom:8px;font-size:11px;color:#8c959f}
+.box{border:1px solid #d1d9e0;border-radius:8px}
+.boxh{background:#f6f8fa;border-bottom:1px solid #d1d9e0;padding:8px 14px;border-radius:8px 8px 0 0;font-size:13px;color:#59636e}
+.boxb{padding:14px}
+label.f{display:block;font-weight:600;margin:16px 0 6px}
+.inp{border:1px solid #d1d9e0;border-radius:6px;padding:8px 10px;background:#fff}
+.desc{color:#59636e;font-size:12px;margin:-2px 0 6px}
+.mdnote{background:#ddf4ff;border:1px solid #54aeff66;border-radius:6px;padding:10px 12px}
+pre{margin:0;font-family:"DejaVu Sans Mono",monospace;font-size:12.5px;background:#f6f8fa;border-radius:6px;padding:10px 12px;white-space:pre-wrap}
+.av{width:32px;height:32px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px}
+.cmt{border:1px solid #d1d9e0;border-radius:8px;margin-top:14px}
+.cmt.answer{border:2px solid #1a7f37}
+.cmth{display:flex;gap:10px;align-items:center;padding:10px 14px;background:#f6f8fa;border-bottom:1px solid #d1d9e0;border-radius:8px 8px 0 0;font-size:13px}
+.cmtb{padding:12px 14px;display:flex;gap:14px}
+.vote{display:flex;flex-direction:column;align-items:center;border:1px solid #d1d9e0;border-radius:6px;padding:4px 8px;font-size:12px;height:fit-content}
+.react{margin-top:10px;display:flex;gap:6px}.react span{border:1px solid #d1d9e0;border-radius:2em;padding:2px 8px;font-size:12px;background:#f6f8fa}
+.reply{border-top:1px solid #d1d9e0;padding:10px 14px 12px 60px;background:#fbfcfd}
+.sub{display:flex;gap:10px;margin-bottom:10px;font-size:13px}
+.greenbox{background:#dafbe1;color:#1a7f37;border-radius:2em;padding:2px 10px;font-size:12px;font-weight:600}
+.dd{position:absolute;background:#fff;border:1px solid #d1d9e0;border-radius:10px;box-shadow:0 8px 24px rgba(140,149,159,.35);width:300px;z-index:4}
+.ddi{padding:8px 14px;border-top:1px solid #eaeef2;display:flex;gap:8px;align-items:center;font-size:13px}
+.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.edtabs{display:flex;gap:4px;padding:6px 8px 0;background:#f6f8fa;border-bottom:1px solid #d1d9e0;border-radius:8px 8px 0 0}
+.edtab{padding:6px 14px;border:1px solid transparent;border-bottom:0;border-radius:6px 6px 0 0;color:#59636e}
+.edtab.on{background:#fff;border-color:#d1d9e0;color:#1f2328;margin-bottom:-1px}
+.tool{margin-left:auto;color:#59636e;letter-spacing:6px;padding:6px 8px;font-weight:700}
+.edfoot{border-top:1px dashed #d1d9e0;padding:8px 12px;color:#59636e;font-size:12px}
+kbd{font-family:"DejaVu Sans Mono",monospace;background:#eff2f5;border-radius:4px;padding:0 4px;font-size:12px}
+</style></head><body>
+
+<!-- ============ 1. HOME ============ -->
+<div class="shot" id="s1">
+ <div class="top"><div class="repo"><span class="lock">🔒</span> your-org / <b>course-repo</b></div>
+  <div class="tabs"><span class="tab">Code</span><span class="tab">Issues</span><span class="tab">Pull requests</span><span class="tab on">💬 Discussions</span><span class="tab">Actions</span></div></div>
+ <div class="wrap">
+  <div class="row"><div class="search hl" id="s1search">🔍 <b>docker compose port</b></div><span class="btn">Sort by: Latest activity ▾</span><span class="btn">Label ▾</span><span class="btn">Filter: Open ▾</span><span class="btn green hl" id="s1new">New discussion</span></div>
+  <div class="cols" style="margin-top:170px">
+   <div class="side"><h3>Categories</h3>
+    <div class="hl" id="s1cats" style="padding:2px">
+    <div class="cat on">💬 View all discussions</div>
+    <div class="cat">📣 Announcements</div><div class="cat">📝 Assignments</div><div class="cat">🙏 Q&amp;A</div>
+    <div class="cat">🐞 Coding Questions</div><div class="cat">🛟 HelpDesk</div><div class="cat">🗳️ Polls</div></div>
+   </div>
+   <div class="main">
+    <div class="pins hl" id="s1pins">
+     <div class="pin">📌 <b>📣 Start here: how Discussions work in this course</b><br><small>Announcements · mentor</small></div>
+     <div class="pin">📌 <b>📝 Assignment 3 – Build a REST API</b><br><small>Assignments · due Sunday</small></div>
+    </div>
+    <h3>Discussions</h3>
+    <div class="list">
+     <div class="item"><div class="emo">🐞</div><div><div class="t">docker compose: port 5432 already in use <span class="lab" style="background:#5319e722;color:#5319e7;border-color:#5319e755">setup-issue</span></div><div class="meta">student-a started in <b>Coding Questions</b> · <span class="ans">✓ Answered</span></div></div><div class="right">▲ 6 &nbsp; 💬 4</div></div>
+     <div class="item"><div class="emo">🙏</div><div><div class="t">Assignment 3: should a missing id return 404 or 400? <span class="lab" style="background:#1d76db22;color:#1d76db;border-color:#1d76db55">assignment-doubt</span></div><div class="meta">student-b started in <b>Q&amp;A</b> · <span class="ans">✓ Answered</span></div></div><div class="right">▲ 11 &nbsp; 💬 3</div></div>
+     <div class="item"><div class="emo">🛟</div><div><div class="t">Session 14 recording link not opening <span class="lab" style="background:#d93f0b22;color:#d93f0b;border-color:#d93f0b55">access-issue</span></div><div class="meta">student-c started in <b>HelpDesk</b> · Unanswered</div></div><div class="right">▲ 2 &nbsp; 💬 1</div></div>
+     <div class="item"><div class="emo">🗳️</div><div><div class="t">Which weekend slot works better for the revision class?</div><div class="meta">mentor started in <b>Polls</b> · 48 votes</div></div><div class="right">💬 5</div></div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="illus">Illustration – your screen may look slightly different</div>
+</div>
+
+<!-- ============ 2. CHOOSE CATEGORY ============ -->
+<div class="shot" id="s2">
+ <div class="top"><div class="repo"><span class="lock">🔒</span> your-org / <b>course-repo</b></div>
+  <div class="tabs"><span class="tab">Code</span><span class="tab">Issues</span><span class="tab">Pull requests</span><span class="tab on">💬 Discussions</span><span class="tab">Actions</span></div></div>
+ <div class="wrap" style="padding-left:120px;padding-right:420px">
+  <h2 style="font-size:22px;margin:0 0 4px">Start a new discussion</h2>
+  <div style="color:#59636e;margin-bottom:18px">Select a category</div>
+  <div class="box">
+   <div class="item"><div class="emo">🙏</div><div><div class="t">Q&amp;A</div><div class="meta">Doubts about assignments and live sessions</div></div><span class="btn right" style="color:#1f2328">Get started</span></div>
+   <div class="item hl" id="s2coding" style="border-radius:0"><div class="emo">🐞</div><div><div class="t">Coding Questions</div><div class="meta">Errors, bugs, setup and installation problems</div></div><span class="btn right" style="color:#1f2328">Get started</span></div>
+   <div class="item"><div class="emo">🛟</div><div><div class="t">HelpDesk</div><div class="meta">Access, deadlines, attendance, certificates and course policies</div></div><span class="btn right" style="color:#1f2328">Get started</span></div>
+  </div>
+ </div>
+ <div class="illus">Illustration – your screen may look slightly different</div>
+</div>
+
+<!-- ============ 3. FORM ============ -->
+<div class="shot" id="s3">
+ <div class="top"><div class="repo"><span class="lock">🔒</span> your-org / <b>course-repo</b></div>
+  <div class="tabs"><span class="tab">Code</span><span class="tab">Issues</span><span class="tab">Pull requests</span><span class="tab on">💬 Discussions</span><span class="tab">Actions</span></div></div>
+ <div class="wrap" style="padding-left:60px;padding-right:420px">
+  <div class="row" style="margin-bottom:6px"><span class="emo">🐞</span><b style="font-size:16px">Coding Questions</b> <span style="color:#0969da;font-size:12px;margin-left:6px">change</span></div>
+  <label class="f">Title</label>
+  <div class="inp hl" id="s3title">ModuleNotFoundError: No module named 'pandas' when running main.py in VS Code</div>
+  <div class="mdnote" style="margin-top:16px"><b>Coding Questions is for errors, bugs and technical problems.</b> Paste the error as text, and attach a screenshot if it helps.<br>⚠️ Never paste passwords, API keys, tokens or <kbd>.env</kbd> files.</div>
+  <label class="f">What kind of problem is it? *</label>
+  <div class="inp hl" id="s3dd" style="display:flex">Setup / installation (tools, environment, packages)<span style="margin-left:auto">▾</span></div>
+  <label class="f">Where are you working? *</label>
+  <div class="inp">Assignment 4, Python 3.12, VS Code on Windows</div>
+  <label class="f">Full error message</label>
+  <div class="desc">Copy-paste the full error text. It is formatted as code automatically.</div>
+  <pre class="hl" id="s3err">Traceback (most recent call last):
+  File "C:\projects\a4\main.py", line 1, in &lt;module&gt;
+    import pandas as pd
+ModuleNotFoundError: No module named 'pandas'</pre>
+  <label class="f">What have you already tried? *</label>
+  <div class="box hl" id="s3tried"><div class="boxb" style="min-height:64px">Ran <kbd>pip install pandas</kbd> – it says "Requirement already satisfied". Restarted VS Code.<br><span style="color:#0969da">![terminal-screenshot.png](…uploading)</span></div>
+   <div class="edfoot">📎 Paste, drop, or click to add files</div></div>
+  <div style="display:flex;margin-top:18px"><span class="btn green hl" id="s3start" style="margin-left:auto">Start discussion</span></div>
+ </div>
+ <div class="illus">Illustration – your screen may look slightly different</div>
+</div>
+
+<!-- ============ 4. THREAD ============ -->
+<div class="shot" id="s4">
+ <div class="top"><div class="repo"><span class="lock">🔒</span> your-org / <b>course-repo</b></div>
+  <div class="tabs"><span class="tab">Code</span><span class="tab">Issues</span><span class="tab">Pull requests</span><span class="tab on">💬 Discussions</span><span class="tab">Actions</span></div></div>
+ <div class="wrap" style="padding-left:60px;padding-right:400px">
+  <h2 style="font-size:24px;font-weight:400;margin:0">ModuleNotFoundError: No module named 'pandas' when running main.py in VS Code <span style="color:#59636e">#42</span></h2>
+  <div class="row" style="margin:8px 0 4px"><span class="greenbox">✓ Answered</span><span style="color:#59636e;font-size:13px">student-a asked in 🐞 Coding Questions</span><span class="lab" style="background:#5319e722;color:#5319e7;border-color:#5319e755">setup-issue</span></div>
+
+  <div class="cmt"><div class="cmth"><div class="av" style="background:#8250df">SA</div><b>student-a</b> asked</div>
+   <div class="cmtb"><div class="vote" id="s4vote">▲<b>6</b></div><div>Ran <kbd>pip install pandas</kbd> – it says "Requirement already satisfied" but VS Code still can't find it…</div></div></div>
+
+  <div class="cmt answer"><div class="cmth" style="background:#dafbe1"><div class="av" style="background:#bf3989">MR</div><b>mentor-ravi</b> commented <span class="greenbox" style="margin-left:auto">✓ Answer selected by student-a</span></div>
+   <div class="cmtb"><div class="vote hl" id="s4up">▲<b>9</b></div><div style="flex:1">VS Code is using a different Python interpreter. Press <kbd>Ctrl+Shift+P</kbd> → <b>Python: Select Interpreter</b> → pick the one in your <kbd>.venv</kbd>.
+    <div class="react"><span>👍 4</span><span>🎉 2</span><span>😊 +</span></div></div></div>
+   <div class="reply"><div class="sub"><div class="av" style="background:#8250df;width:24px;height:24px;font-size:10px">SA</div><div><b>student-a</b> That fixed it, thank you!</div></div>
+    <div class="inp hl" id="s4reply" style="color:#59636e">Write a reply</div></div></div>
+
+  <div class="cmt"><div class="cmth"><div class="av" style="background:#0969da">SB</div><b>student-b</b> commented <span class="btn hl" id="s4mark" style="margin-left:auto;font-size:12px;padding:3px 10px">✓ Mark as answer</span></div>
+   <div class="cmtb"><div class="vote">▲<b>2</b></div><div>You can also check with <kbd>where python</kbd> in the VS Code terminal.</div></div></div>
+
+  <div class="box hl" id="s4new" style="margin-top:18px"><div class="boxh">Add a comment</div><div class="boxb" style="color:#59636e;min-height:50px">Use Markdown to format your comment</div>
+   <div style="display:flex;padding:0 14px 12px"><span class="btn green" style="margin-left:auto">Comment</span></div></div>
+ </div>
+ <div class="illus">Illustration – your screen may look slightly different</div>
+</div>
+
+<!-- ============ 5. LABELS ============ -->
+<div class="shot" id="s5">
+ <div class="top"><div class="repo"><span class="lock">🔒</span> your-org / <b>course-repo</b></div>
+  <div class="tabs"><span class="tab">Code</span><span class="tab">Issues</span><span class="tab">Pull requests</span><span class="tab on">💬 Discussions</span><span class="tab">Actions</span></div></div>
+ <div class="wrap" style="min-height:560px">
+  <div class="row"><div class="search hl" id="s5search"><b>is:open label:assignment-doubt assignment 3</b></div><span class="btn">Sort by: Latest activity ▾</span><span class="btn hl" id="s5labbtn">Label ▾</span><span class="btn">Filter: Open ▾</span><span class="btn green">New discussion</span></div>
+  <div class="dd" id="s5dd" style="left:900px;top:185px">
+   <div style="padding:10px 14px;font-weight:600;font-size:13px">Filter by label</div>
+   <div class="ddi"><span class="dot" style="background:#1d76db"></span><b>assignment-doubt</b> ✓</div>
+   <div class="ddi"><span class="dot" style="background:#0e8a16"></span>session-doubt</div>
+   <div class="ddi"><span class="dot" style="background:#5319e7"></span>setup-issue</div>
+   <div class="ddi"><span class="dot" style="background:#d93f0b"></span>access-issue</div>
+   <div class="ddi"><span class="dot" style="background:#c5def5"></span>course-policy</div>
+   <div class="ddi"><span class="dot" style="background:#fbca04"></span>needs-info</div>
+   <div class="ddi"><span class="dot" style="background:#cfd3d7"></span>duplicate</div>
+   <div class="ddi"><span class="dot" style="background:#b60205"></span>faq</div>
+  </div>
+  <div style="margin-top:110px;width:720px">
+   <h3>2 discussions</h3>
+   <div class="list">
+    <div class="item"><div class="emo">🙏</div><div><div class="t">Assignment 3: should a missing id return 404 or 400? <span class="lab hl" id="s5chip" style="background:#1d76db22;color:#1d76db;border-color:#1d76db55">assignment-doubt</span> <span class="lab" style="background:#b6020522;color:#b60205;border-color:#b6020555">faq</span></div><div class="meta">student-b started in <b>Q&amp;A</b> · <span class="ans">✓ Answered</span></div></div><div class="right">▲ 11</div></div>
+    <div class="item"><div class="emo">🙏</div><div><div class="t">Assignment 3: pagination on GET /items? <span class="lab" style="background:#1d76db22;color:#1d76db;border-color:#1d76db55">assignment-doubt</span> <span class="lab" style="background:#fbca0433;color:#7d5e00;border-color:#fbca04">needs-info</span></div><div class="meta">student-d started in <b>Q&amp;A</b> · Unanswered</div></div><div class="right">▲ 3</div></div>
+   </div>
+  </div>
+ </div>
+ <div class="illus">Illustration – your screen may look slightly different</div>
+</div>
+
+<!-- ============ 6. WRITE / PREVIEW ============ -->
+<div class="shot" id="s6">
+ <div class="wrap" style="display:flex;gap:28px;padding-top:100px;padding-bottom:110px">
+  <div style="flex:1">
+   <div class="box"><div class="edtabs"><span class="edtab on">Write</span><span class="edtab hl" id="s6prev">Preview</span><span class="tool">H B I ‹› 🔗 ☰</span></div>
+    <pre class="hl" id="s6code" style="background:#fff;min-height:210px;border-radius:0;font-size:13px">My loop prints the last item only:
+
+```python
+for item in items:
+    result = item
+print(result)
+```
+
+Expected all 3 items, got only `c`.
+</pre>
+    <div class="edfoot hl" id="s6drop">📎 Paste, drop, or click to add files</div></div>
+  </div>
+  <div style="flex:1">
+   <div style="font-weight:600;margin-bottom:8px;color:#59636e">→ What everyone will see</div>
+   <div class="box"><div class="boxb">My loop prints the last item only:
+    <pre style="margin:10px 0"><span style="color:#cf222e">for</span> item <span style="color:#cf222e">in</span> items:
+    result = item
+<span style="color:#8250df">print</span>(result)</pre>Expected all 3 items, got only <kbd>c</kbd>.</div></div>
+  </div>
+ </div>
+ <div class="illus">Illustration – your screen may look slightly different</div>
+</div>
+
+<!-- ============ 7. WHICH CATEGORY ============ -->
+<div class="shot" id="s7" style="padding:36px 40px 44px">
+ <style>
+ .q{background:#f6f8fa;border:2px solid #d1d9e0;border-radius:12px;padding:14px 18px;font-weight:700;font-size:18px;text-align:center}
+ .grid7{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:34px}
+ .c7{border:2px solid;border-radius:12px;padding:16px;text-align:center}
+ .c7 .e{font-size:40px}.c7 .n{font-weight:700;font-size:18px;margin:6px 0}.c7 .x{color:#59636e;font-size:14px;line-height:1.5}
+ .arrow{text-align:center;color:#8c959f;font-size:26px;margin-top:-26px}
+ .mentor{margin-top:30px;display:flex;gap:18px;align-items:center;justify-content:center;color:#59636e;font-size:15px}
+ .mentor span{border:2px dashed #d1d9e0;border-radius:10px;padding:8px 14px}
+ </style>
+ <div class="q">🤔 What do you need?</div>
+ <div class="grid7">
+  <div class="c7" style="border-color:#1d76db"><div class="e">🙏</div><div class="n">Q&amp;A</div><div class="x">"I don't understand<br>this assignment / topic"</div></div>
+  <div class="c7" style="border-color:#5319e7"><div class="e">🐞</div><div class="n">Coding Questions</div><div class="x">"I get an error"<br>"Setup isn't working"</div></div>
+  <div class="c7" style="border-color:#d93f0b"><div class="e">🛟</div><div class="n">HelpDesk</div><div class="x">"I can't access…"<br>"What's the deadline / policy?"</div></div>
+  <div class="c7" style="border-color:#1f883d"><div class="e">📝</div><div class="n">Assignments</div><div class="x">"I want to submit"<br>→ comment on the assignment</div></div>
+ </div>
+ <div class="mentor">Read &amp; vote only: <span>📣 Announcements</span><span>🗳️ Polls</span> &nbsp;·&nbsp; 🚫 Anything else → not here</div>
+</div>
+
+<script>
+// badge + note placement relative to highlighted element
+function mark(shot, id, n, text, side, dx=0, dy=0){
+  const s=document.getElementById(shot), el=document.getElementById(id);
+  const sr=s.getBoundingClientRect(), r=el.getBoundingClientRect();
+  const b=document.createElement('div'); b.className='badge'; b.textContent=n;
+  b.style.left=(r.left-sr.left-18)+'px'; b.style.top=(r.top-sr.top-18)+'px'; s.appendChild(b);
+  if(!text) return;
+  const t=document.createElement('div'); t.className='note'; t.innerHTML='<b>'+n+'</b> '+text; s.appendChild(t);
+  let x,y;
+  if(side==='right'){x=r.right-sr.left+20;y=r.top-sr.top;}
+  else if(side==='below'){x=r.left-sr.left;y=r.bottom-sr.top+14;}
+  else if(side==='left'){x=r.left-sr.left-t.offsetWidth-20;y=r.top-sr.top;}
+  else {x=r.left-sr.left;y=r.top-sr.top-t.offsetHeight-14;}
+  t.style.left=(x+dx)+'px'; t.style.top=(y+dy)+'px';
+}
+mark('s1','s1search',1,'<b>Search first</b> – your question may already be answered.','below',0,6);
+mark('s1','s1new',2,'Click <b>New discussion</b> to ask something.','below',-160,6);
+mark('s1','s1cats',3,'Click a <b>category</b> to see only its discussions.','below');
+mark('s1','s1pins',4,'<b>Pinned</b> posts – read these first.','above',0,0);
+
+mark('s2','s2coding',1,'Pick the category that fits your question, then <b>Get started</b>. Mentor-only categories (Announcements, Assignments, Polls) are not for new posts from students.','right',20);
+
+mark('s3','s3title',1,'A <b>specific title</b> – include the error or the exact topic.','right');
+mark('s3','s3dd',2,'This choice adds a <b>label</b> automatically (here: <kbd>setup-issue</kbd>).','right');
+mark('s3','s3err',3,'Paste the <b>error as text</b> – it can be searched and copied.','right');
+mark('s3','s3tried',4,'<b>Drag &amp; drop or paste</b> screenshots here.','right');
+mark('s3','s3start',5,'Review, then <b>Start discussion</b>.','right');
+
+mark('s4','s4up',1,'<b>Upvote</b> helpful answers instead of writing "+1" or "thanks".','right',775,-20);
+mark('s4','s4reply',2,'<b>Write a reply</b> to respond to <i>this</i> comment (keeps the conversation threaded).','right');
+mark('s4','s4mark',3,'Asked the question? <b>Mark as answer</b> on the reply that solved it.','right');
+mark('s4','s4new',4,'<b>Add a comment</b> at the bottom for a new point – or your <b>assignment submission</b>.','right');
+
+mark('s5','s5search',1,'Type <kbd>label:assignment-doubt</kbd> (plus keywords) in search.','below',0,6);
+mark('s5','s5labbtn',2,'…or pick a label from the <b>Label</b> menu.','below',-290,30);
+mark('s5','s5chip',3,'Click any <b>label chip</b> to see all discussions with that label.','below',0,120);
+
+mark('s6','s6code',1,'Wrap code in <kbd>```python</kbd> … <kbd>```</kbd>','right',-320,70);
+mark('s6','s6prev',2,'Check <b>Preview</b> before posting.','above',0,0);
+mark('s6','s6drop',3,'Paste, drag or click to <b>attach screenshots</b>.','below',0,12);
+</script>
+</body></html>

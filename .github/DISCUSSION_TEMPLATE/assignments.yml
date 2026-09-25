@@ -1,0 +1,34 @@
+# Form for the "Assignments" category (slug: assignments).
+# Only maintainers/admins can start discussions here (Announcement format),
+# so this form keeps every assignment post consistent.
+body:
+  - type: textarea
+    id: brief
+    attributes:
+      label: Assignment
+      description: What students need to build or answer.
+    validations:
+      required: true
+  - type: input
+    id: due
+    attributes:
+      label: Due date
+      placeholder: "e.g. Sunday 12 October, 11:59 PM IST"
+    validations:
+      required: true
+  - type: textarea
+    id: submit
+    attributes:
+      label: How to submit
+      value: |
+        Reply to this discussion with a **new comment** (not a reply to someone else) containing:
+        1. A link to your repository / notebook / deployed app
+        2. A short note on your approach (2–4 lines)
+        3. Anything you could not finish
+    validations:
+      required: true
+  - type: textarea
+    id: resources
+    attributes:
+      label: Resources
+      description: Links, starter code, reference material.
